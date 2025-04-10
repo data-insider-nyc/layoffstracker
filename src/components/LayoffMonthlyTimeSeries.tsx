@@ -16,7 +16,7 @@ type AggregatedData = {
   totalLayoffs: number;
 };
 
-type MonthlyTimeSeriesProps = {
+type LayoffMonthlyTimeSeriesPros = {
   data: Array<{
     company: string;
     headquarters?: string;
@@ -25,7 +25,9 @@ type MonthlyTimeSeriesProps = {
   }>;
 };
 
-const MonthlyTimeSeries: React.FC<MonthlyTimeSeriesProps> = ({ data }) => {
+const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesPros> = ({
+  data,
+}) => {
   // Function to group data by month
   const aggregatedData: AggregatedData[] = React.useMemo(() => {
     const monthlyData: { [key: string]: number } = {};
@@ -51,7 +53,9 @@ const MonthlyTimeSeries: React.FC<MonthlyTimeSeriesProps> = ({ data }) => {
 
   return (
     <div style={{ width: "100%", height: 500 }}>
-      <h2 className="text-center text-xl mb-4">Monthly Layoffs (2020 - Present)</h2>
+      <h2 className="text-center text-xl mb-4">
+        Monthly Layoffs
+      </h2>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart
           data={aggregatedData}
@@ -75,10 +79,10 @@ const MonthlyTimeSeries: React.FC<MonthlyTimeSeriesProps> = ({ data }) => {
   );
 };
 
-const LayoffLineChart = () => {
+const LayoffMonthlyTimeSeriesChart = () => {
   const data = useLayoffData();
 
-  return <MonthlyTimeSeries data={data} />;
+  return <LayoffMonthlyTimeSeries data={data} />;
 };
 
-export default LayoffLineChart;
+export default LayoffMonthlyTimeSeriesChart;

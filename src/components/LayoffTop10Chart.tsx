@@ -10,7 +10,7 @@ import {
   LabelList,
 } from "recharts";
 
-type Top10LayoffsBarChartProps = {
+type LayoffTop10ChartProps = {
   data: Array<{
     company: string;
     headquarters?: string;
@@ -19,7 +19,7 @@ type Top10LayoffsBarChartProps = {
   }>;
 };
 
-const Top10LayoffsBarChart: React.FC<Top10LayoffsBarChartProps> = ({ data }) => {
+const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
   // Aggregate data by company
   const aggregatedData = React.useMemo(() => {
     const companyData: { [key: string]: number } = {};
@@ -70,4 +70,4 @@ const Top10LayoffsBarChart: React.FC<Top10LayoffsBarChartProps> = ({ data }) => 
   );
 };
 
-export default Top10LayoffsBarChart;
+export default LayoffTop10Chart;
