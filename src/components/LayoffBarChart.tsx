@@ -13,7 +13,7 @@ const LayoffBarChart = () => {
   if (top10.length === 0) return <div>Loading chart...</div>  // Display loading message if data is empty
 
   return (
-    <div style={{ width: '100%', height: 400 }}>
+    <div style={{ width: 700, height: 400 }}>
       <h2 style={{ marginBottom: '1rem' }}>Top 10 Companies by Layoffs</h2>
       <ResponsiveContainer>
         <BarChart data={top10} layout="vertical" margin={{ top: 10, right: 30, left: 80, bottom: 10 }}>
