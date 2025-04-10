@@ -6,8 +6,8 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
+  LabelList,
 } from "recharts";
 import { useLayoffData } from "../hooks/useLayoffData";
 
@@ -16,10 +16,15 @@ type AggregatedData = {
   totalLayoffs: number;
 };
 
-const LayoffLineChart = () => {
-  const rawData = useLayoffData();
+type MonthlyTimeSeriesProps = {
+  rawData: Array<{
+    date: Date;
+    laidOff: number;
+  }>;
+};
 
-  // Aggregate data by month
+const MonthlyTimeSeries: React.FC<MonthlyTimeSeriesProps> = ({ rawData }) => {
+  // Function to group data by month
   const aggregatedData: AggregatedData[] = React.useMemo(() => {
     const monthlyData: { [key: string]: number } = {};
 
@@ -44,28 +49,34 @@ const LayoffLineChart = () => {
 
   return (
     <div style={{ width: "100%", height: 500 }}>
-      <h2 style={{ marginBottom: "1rem" }}>Monthly Layoffs</h2>
-      <p>
-        Data from 2020 to the present showing the total number of layoffs
-        grouped by month.
-      </p>
-      <ResponsiveContainer width="100%">
-        <BarChart data={aggregatedData}>
+      <h2 className="text-center text-xl mb-4">Monthly Layoffs (2020 - Present)</h2>
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart
+          data={aggregatedData}
+          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+        >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" />
-          <YAxis />
+          <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+          <YAxis tick={{ fontSize: 12 }} />
           <Tooltip />
-          <Legend />
-          <Bar
-            type="monotone"
-            dataKey="totalLayoffs"
-            fill="#8884d8"
-            activeDot={{ r: 8 }}
-          />
+          <Bar dataKey="totalLayoffs" fill="#8884d8">
+            <LabelList
+              dataKey="totalLayoffs"
+              position="top"
+              formatter={(value: number) => value.toLocaleString()} // Format numbers with commas
+              style={{ fontSize: 10, fill: "#333" }}
+            />
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>
   );
+};
+
+const LayoffLineChart = () => {
+  const rawData = useLayoffData();
+
+  return <MonthlyTimeSeries rawData={rawData} />;
 };
 
 export default LayoffLineChart;
