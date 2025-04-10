@@ -1,32 +1,45 @@
-// useLayoffData.ts (or useLayoffData.tsx)
-import { useState, useEffect } from 'react';
-import Papa from 'papaparse';
+import { useEffect, useState } from 'react'
+import Papa from 'papaparse'
 
-// Define types for the data
-interface LayoffData {
-  company: string;
-  laidOff: number;
+export interface LayoffData {
+  company: string
+  laidOff: number
 }
 
 export const useLayoffData = (): LayoffData[] => {
-  const [data, setData] = useState<LayoffData[]>([]);
+  const [data, setData] = useState<LayoffData[]>([])
 
   useEffect(() => {
-    fetch('/trendboard/data/layoffs.csv')
-      .then(res => res.text())
-      .then(csv => {
-        const parsed = Papa.parse(csv, { header: true, skipEmptyLines: true }).data;
-        const cleaned = parsed
-          .filter((row: any) => row['Company'] && row['# Laid Off'])
-          .map((row: any) => ({
-            company: row['Company'],
-            laidOff: Number(row['# Laid Off'].replace(/,/g, '')) || 0
-          }));
-        setData(cleaned);
-      });
-  }, []);
+    fetch('/trendboard/data/layoffs-cleaned.csv')
+      .then((res) => res.text())
+      .then((csv) => {
+        const parsed = Papa.parse(csv, { header: true, skipEmptyLines: true }).data as Array<{
+          Company?: string
+          HQ?: string
+          layoffs?: string
+        }>
 
-  console.log('Layoff data:', data); // Log the data to the console for debugging
+        const cleaned: LayoffData[] = parsed
+          .filter(row => row.Company && row.layoffs) // Ensure required fields exist
+          .map(row => {
+            const company = String(row.Company).trim()
+            const layoffs = parseInt(String(row.layoffs).trim(), 10)
 
-  return data;
-};
+            return {
+              company,
+              laidOff: isNaN(layoffs) ? 0 : layoffs, // Handle invalid numbers
+            }
+          })
+          .filter(row => row.laidOff > 0) // Final validation
+
+        setData(cleaned)
+      })
+      .catch((error) => {
+        console.error('Failed to load CSV:', error)
+      })
+  }, [])
+
+  console.log('Layoff data:', data)
+
+  return data
+}
