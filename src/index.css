@@ -56,11 +56,10 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
   justify-content: center;  /* Horizontally center content */
   align-items: center;      /* Vertically center content */
   width: 100%;              /* Ensure body stretches to full width */
-  @apply text-[12px];
+  @apply text-[13px];
 }
 
 h1 {

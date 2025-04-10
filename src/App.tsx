@@ -45,7 +45,7 @@ function App() {
                   <LayoffMonthlyTimeSeries rawData={data} />
                 </Suspense>
               </div>
-              
+
               <div>
                 <Suspense fallback={<div>Loading Bar Chart...</div>}>
                   <LayoffTop10Chart data={data} />
