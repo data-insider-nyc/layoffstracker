@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useLayoffData } from '../hooks/useLayoffData'
 
 const LayoffTable = () => {
@@ -14,7 +14,7 @@ const LayoffTable = () => {
   return (
     <div className="table-container my-4">
       <h2 className="text-center text-xl mb-4">Layoff Data Overview</h2>
-      <div className="overflow-x-auto max-h-[500px] border border-gray-300 rounded-md">
+      <div className="overflow-x-auto" style={{ maxHeight: '400px', overflowY: 'auto' }}>
         <table className="table-auto w-full text-left border-collapse">
           <thead className="bg-gray-100 sticky top-0">
             <tr>
