@@ -1,7 +1,10 @@
+import React, { Suspense } from 'react'
 import LayoffTable from './components/LayoffTable'
-import Top10LayoffsBarChart from './components/Top10LayoffsBarChart'
-import MonthlyTimeSeries from './components/MonthlyTimeSeries'
 import { useLayoffData } from './hooks/useLayoffData'
+
+// Lazy load components
+const Top10LayoffsBarChart = React.lazy(() => import('./components/Top10LayoffsBarChart'))
+const MonthlyTimeSeries = React.lazy(() => import('./components/MonthlyTimeSeries'))
 
 function App() {
   const data = useLayoffData() // Fetch the data
@@ -34,12 +37,16 @@ function App() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', marginTop: '2rem' }}>
           {/* First grid item for Top10LayoffsBarChart */}
           <div style={{ gridColumn: '1 / 2' }}>
-            <Top10LayoffsBarChart data={data} />
+            <Suspense fallback={<div>Loading Bar Chart...</div>}>
+              <Top10LayoffsBarChart data={data} />
+            </Suspense>
           </div>
 
           {/* Second grid item for MonthlyTimeSeries */}
           <div style={{ gridColumn: '2 / 4' }}>
-            <MonthlyTimeSeries rawData={data} />
+            <Suspense fallback={<div>Loading Time Series...</div>}>
+              <MonthlyTimeSeries rawData={data} />
+            </Suspense>
           </div>
         </div>
       </div>

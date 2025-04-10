@@ -17,18 +17,20 @@ type AggregatedData = {
 };
 
 type MonthlyTimeSeriesProps = {
-  rawData: Array<{
-    date: Date;
+  data: Array<{
+    company: string;
+    headquarters?: string;
     laidOff: number;
+    date: Date;
   }>;
 };
 
-const MonthlyTimeSeries: React.FC<MonthlyTimeSeriesProps> = ({ rawData }) => {
+const MonthlyTimeSeries: React.FC<MonthlyTimeSeriesProps> = ({ data }) => {
   // Function to group data by month
   const aggregatedData: AggregatedData[] = React.useMemo(() => {
     const monthlyData: { [key: string]: number } = {};
 
-    rawData.forEach(({ date, laidOff }) => {
+    data.forEach(({ date, laidOff }) => {
       const month = `${date.getFullYear()}-${String(
         date.getMonth() + 1
       ).padStart(2, "0")}`; // Format: YYYY-MM
@@ -41,7 +43,7 @@ const MonthlyTimeSeries: React.FC<MonthlyTimeSeriesProps> = ({ rawData }) => {
       .sort(
         (a, b) => new Date(a.month).getTime() - new Date(b.month).getTime()
       );
-  }, [rawData]);
+  }, [data]);
 
   if (aggregatedData.length === 0) {
     return <div>Loading chart...</div>;
@@ -74,9 +76,9 @@ const MonthlyTimeSeries: React.FC<MonthlyTimeSeriesProps> = ({ rawData }) => {
 };
 
 const LayoffLineChart = () => {
-  const rawData = useLayoffData();
+  const data = useLayoffData();
 
-  return <MonthlyTimeSeries rawData={rawData} />;
+  return <MonthlyTimeSeries data={data} />;
 };
 
 export default LayoffLineChart;
