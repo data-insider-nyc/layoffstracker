@@ -53,9 +53,7 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesPros> = ({
 
   return (
     <div style={{ width: "100%", height: 500 }}>
-      <h2 className="text-center text-xl mb-4">
-        Monthly Layoffs
-      </h2>
+      <h2 className="text-center text-xl mb-4">Monthly Layoffs</h2>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart
           data={aggregatedData}

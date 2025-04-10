@@ -14,36 +14,43 @@ function App() {
   }
 
   return (
-    <div style={{ fontFamily: 'sans-serif' }}>
+    <div style={{ fontFamily: "sans-serif" }}>
+
       {/* Navbar */}
-      <nav style={{
-        backgroundColor: '#333',
-        color: '#fff',
-        padding: '1rem',
-        textAlign: 'center',
-        fontSize: '1.5rem'
-      }}>
-        Trendboard
+      <nav className="w-full bg-white shadow-md py-4 px-6 sticky top-0 z-10 flex items-center justify-between">
+        <h2 className="text-lg font-bold tracking-wide">📊 Trendboard</h2>
+        <ul className="flex space-x-6 text-sm">
+          <li className="hover:text-blue-600 cursor-pointer">Home</li>
+          <li className="hover:text-blue-600 cursor-pointer">Dashboards</li>
+          <li className="hover:text-blue-600 cursor-pointer">About</li>
+        </ul>
       </nav>
 
       {/* Main Content */}
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
+      <div style={{ padding: "2rem", textAlign: "center" }}>
         {/* Layoff Table with 100% width */}
-        <div style={{ width: '80%' }}>
+        <div style={{ width: "80%" }}>
           <LayoffTable />
         </div>
 
         {/* Grid layout for BarChart and LineChart */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', marginTop: '2rem' }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr",
+            gap: "1rem",
+            marginTop: "2rem",
+          }}
+        >
           {/* First grid item for LayoffTop10Chart */}
-          <div style={{ gridColumn: '1 / 2' }}>
+          <div style={{ gridColumn: "1 / 2" }}>
             <Suspense fallback={<div>Loading Bar Chart...</div>}>
               <LayoffTop10Chart data={data} />
             </Suspense>
           </div>
 
           {/* Second grid item for LayoffMonthlyTimeSeries */}
-          <div style={{ gridColumn: '2 / 4' }}>
+          <div style={{ gridColumn: "2 / 4" }}>
             <Suspense fallback={<div>Loading Time Series...</div>}>
               <LayoffMonthlyTimeSeries rawData={data} />
             </Suspense>
@@ -51,7 +58,7 @@ function App() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default App

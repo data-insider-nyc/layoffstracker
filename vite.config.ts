@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 import { visualizer } from 'rollup-plugin-visualizer'
 import compression from 'vite-plugin-compression'
 
@@ -8,6 +9,7 @@ export default defineConfig({
   base: '/trendboard/',
   plugins: [
     react(),
+    tailwindcss(),
     visualizer({
       open: true, // Automatically open the report in the browser
       filename: 'bundle-analysis.html', // Output file for the report

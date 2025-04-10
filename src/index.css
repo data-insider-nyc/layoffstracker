@@ -28,6 +28,7 @@ body {
   justify-content: center;  /* Horizontally center content */
   align-items: center;      /* Vertically center content */
   width: 100%;              /* Ensure body stretches to full width */
+  @apply text-[12px];
 }
 
 
@@ -67,3 +68,5 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+@import "tailwindcss";

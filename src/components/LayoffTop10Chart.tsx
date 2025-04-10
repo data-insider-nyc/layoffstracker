@@ -41,7 +41,7 @@ const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
 
   return (
     <div style={{ width: "100%", height: 500 }}>
-      <h2 style={{ marginBottom: "1rem" }}>Top 10 Companies by Layoffs</h2>
+      <h2 className="text-center text-xl mb-4">Top 10 Companies by Layoffs</h2>
       <p>
         Data from 2020 to the present showing the number of layoffs across
         various companies.
