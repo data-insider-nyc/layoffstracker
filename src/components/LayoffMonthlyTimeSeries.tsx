@@ -36,14 +36,19 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesPros> = ({
       const month = `${date.getFullYear()}-${String(
         date.getMonth() + 1
       ).padStart(2, "0")}`; // Format: YYYY-MM
+      const year = date.getFullYear();
       monthlyData[month] = (monthlyData[month] || 0) + laidOff;
     });
 
     // Convert the aggregated object into an array and sort by month (oldest to newest)
+    const now = new Date();
+    const twoYearsAgo = new Date(now.getFullYear() - 2, now.getMonth() + 1);
+
     return Object.entries(monthlyData)
       .map(([month, totalLayoffs]) => ({ month, totalLayoffs }))
+      .filter(({ month }) => new Date(month) >= twoYearsAgo)
       .sort(
-        (a, b) => new Date(a.month).getTime() - new Date(b.month).getTime()
+      (a, b) => new Date(a.month).getTime() - new Date(b.month).getTime()
       );
   }, [data]);
 
@@ -52,12 +57,12 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesPros> = ({
   }
 
   return (
-    <div style={{ width: "100%", height: 500 }}>
+    <div style={{ width: "100%", height: 400 }}>
       <h2 className="text-center text-xl mb-4">Monthly Layoffs</h2>
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer>
         <BarChart
           data={aggregatedData}
-          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+          margin={{ top: 10, right: 50, left: 50, bottom: 10 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" tick={{ fontSize: 12 }} />

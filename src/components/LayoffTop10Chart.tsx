@@ -40,17 +40,13 @@ const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
   }
 
   return (
-    <div style={{ width: "100%", height: 500 }}>
+    <div style={{ width: "100%", height: 400 }}>
       <h2 className="text-center text-xl mb-4">Top 10 Companies by Layoffs</h2>
-      <p>
-        Data from 2020 to the present showing the number of layoffs across
-        various companies.
-      </p>
       <ResponsiveContainer>
         <BarChart
           data={aggregatedData}
           layout="vertical"
-          margin={{ top: 10, right: 50, left: 80, bottom: 10 }}
+          margin={{ top: 10, right: 50, left: 50, bottom: 10 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis type="number" />

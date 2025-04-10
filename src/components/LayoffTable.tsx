@@ -15,6 +15,7 @@ const LayoffTable = () => {
       <h2 className="text-center text-xl mb-4">
         Layoff Data Overview (2020 - Present)
       </h2>
+      <p>Data from 2020 to the present showing the number of layoffs across various companies.</p>
       <div
         className="overflow-x-auto"
         style={{ maxHeight: "400px", overflowY: "auto" }}

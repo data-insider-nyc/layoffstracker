@@ -40,15 +40,15 @@ function App() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-              <div>
-                <Suspense fallback={<div>Loading Bar Chart...</div>}>
-                  <LayoffTop10Chart data={data} />
-                </Suspense>
-              </div>
-
               <div className="col-span-2">
                 <Suspense fallback={<div>Loading Time Series...</div>}>
                   <LayoffMonthlyTimeSeries rawData={data} />
+                </Suspense>
+              </div>
+              
+              <div>
+                <Suspense fallback={<div>Loading Bar Chart...</div>}>
+                  <LayoffTop10Chart data={data} />
                 </Suspense>
               </div>
             </div>
