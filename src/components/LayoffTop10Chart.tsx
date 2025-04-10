@@ -49,8 +49,8 @@ const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
           margin={{ top: 10, right: 50, left: 50, bottom: 10 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis type="number" />
-          <YAxis type="category" dataKey="company" />
+          <XAxis type="number" tick={{ fontSize: 10 }} />
+          <YAxis type="category" tick={{ fontSize: 10 }} dataKey="company" />
           <Tooltip />
           <Bar dataKey="laidOff" fill="#8884d8">
             <LabelList
