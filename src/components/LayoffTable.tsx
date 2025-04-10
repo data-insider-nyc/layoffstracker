@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react'
 import { useLayoffData } from '../hooks/useLayoffData'
 
 const LayoffTable = () => {
@@ -13,8 +12,13 @@ const LayoffTable = () => {
 
   return (
     <div className="table-container my-4">
-      <h2 className="text-center text-xl mb-4">Layoff Data Overview</h2>
-      <div className="overflow-x-auto" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+      <h2 className="text-center text-xl mb-4">
+        Layoff Data Overview (2020 - Present)
+      </h2>
+      <div
+        className="overflow-x-auto"
+        style={{ maxHeight: "400px", overflowY: "auto" }}
+      >
         <table className="table-auto w-full text-left border-collapse">
           <thead className="bg-gray-100 sticky top-0">
             <tr>
@@ -30,7 +34,7 @@ const LayoffTable = () => {
               <tr key={index} className="hover:bg-gray-50">
                 {headers.map((header) => (
                   <td key={header} className="border px-4 py-2">
-                    {header === 'date' && row[header] instanceof Date
+                    {header === "date" && row[header] instanceof Date
                       ? row[header].toLocaleDateString() // Format Date object as a readable string
                       : row[header]}
                   </td>
@@ -41,7 +45,7 @@ const LayoffTable = () => {
         </table>
       </div>
     </div>
-  )
+  );
 }
 
 export default LayoffTable
