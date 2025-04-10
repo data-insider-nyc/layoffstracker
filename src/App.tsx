@@ -34,7 +34,7 @@ function App() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', marginTop: '2rem' }}>
           {/* First grid item for Top10LayoffsBarChart */}
           <div style={{ gridColumn: '1 / 2' }}>
-            <Top10LayoffsBarChart />
+            <Top10LayoffsBarChart data={data} />
           </div>
 
           {/* Second grid item for MonthlyTimeSeries */}
