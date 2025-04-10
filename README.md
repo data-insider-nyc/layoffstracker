@@ -1,54 +1,80 @@
-# React + TypeScript + Vite
+# Trendboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Trendboard** is a web application that visualizes real-time, trendy public datasets through interactive charts and dashboards. Built using modern technologies like React, Vite, and Recharts, this app provides an insightful way to explore datasets like layoffs, stock data, and more.
 
-Currently, two official plugins are available:
+## Features
+- Interactive data visualizations using charts
+- Filterable datasets for easy analysis
+- Responsive layout using Tailwind CSS for a modern look
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
+- **Frontend**: React, Vite, TypeScript, Recharts, Tailwind CSS
+- **API**: Airtable (or static CSV files)
+- **Deployment**: GitHub Pages
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+To run the project locally, follow these steps:
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+1. Clone the repository:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+    ```bash
+    git clone https://github.com/Kyeongan/trendboard.git
+    cd trendboard
+    ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+2. Install the dependencies:
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+    ```bash
+    npm install
+    ```
+
+3. Run the development server:
+
+    ```bash
+    npm run dev
+    ```
+
+    This will start the app at `http://localhost:5173`.
+
+## Build and Deployment
+
+To build the app for production and deploy it, follow these steps:
+
+1. Build the project:
+
+    ```bash
+    npm run build
+    ```
+
+    This will generate a `dist` folder containing the optimized production build.
+
+2. Deploy to GitHub Pages:
+
+    ```bash
+    npm run deploy
+    ```
+
+    This will push the latest build to the `gh-pages` branch and deploy it to GitHub Pages.
+
+## Development
+
+1. **Run Locally**: To run the app locally for development, you can use the `npm run dev` command. This will start a development server with hot-reloading.
+
+2. **Make Changes**: Edit the components, data files, and styles as needed.
+
+3. **Linting**: To run linting on your code, use the following command:
+
+    ```bash
+    npm run lint
+    ```
+
+4. **Create a Pull Request**: When you're done making changes, push them to your branch and open a pull request to merge them into the main branch.
+
+## Contributing
+
+Feel free to fork the repository, make changes, and open pull requests. Contributions are always welcome!
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
