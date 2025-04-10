@@ -1,22 +1,25 @@
-import React, { Suspense } from 'react'
-import LayoffTable from './components/LayoffTable'
-import { useLayoffData } from './hooks/useLayoffData'
+import React, { Suspense } from "react";
+import LayoffTable from "./components/LayoffTable";
+import { useLayoffData } from "./hooks/useLayoffData";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Lazy load components
-const LayoffTop10Chart = React.lazy(() => import('./components/LayoffTop10Chart'))
-const LayoffMonthlyTimeSeries = React.lazy(() => import('./components/LayoffMonthlyTimeSeries'))
+
+const LayoffTop10Chart = React.lazy(
+  () => import("./components/LayoffTop10Chart")
+);
+const LayoffMonthlyTimeSeries = React.lazy(
+  () => import("./components/LayoffMonthlyTimeSeries")
+);
 
 function App() {
-  const data = useLayoffData() // Fetch the data
+  const data = useLayoffData();
 
   if (data.length === 0) {
-    return <div>Loading...</div> // Handle loading state
+    return <div>Loading...</div>;
   }
 
   return (
-    <div style={{ fontFamily: "sans-serif" }}>
-
-      {/* Navbar */}
+    <div className="font-sans">
       <nav className="w-full bg-white shadow-md py-4 px-6 sticky top-0 z-10 flex items-center justify-between">
         <h2 className="text-lg font-bold tracking-wide">📊 Trendboard</h2>
         <ul className="flex space-x-6 text-sm">
@@ -26,39 +29,35 @@ function App() {
         </ul>
       </nav>
 
-      {/* Main Content */}
-      <div style={{ padding: "2rem", textAlign: "center" }}>
-        {/* Layoff Table with 100% width */}
-        <div style={{ width: "80%" }}>
-          <LayoffTable />
-        </div>
+      <Tabs defaultValue="layoff" className="">
+        <TabsList>
+          <TabsTrigger value="layoff">Layoffs Tracker</TabsTrigger>
+        </TabsList>
+        <TabsContent value="layoff">
+          <div className="p-8 text-center">
+            <div className="w-4/5 mx-auto">
+              <LayoffTable />
+            </div>
 
-        {/* Grid layout for BarChart and LineChart */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: "1rem",
-            marginTop: "2rem",
-          }}
-        >
-          {/* First grid item for LayoffTop10Chart */}
-          <div style={{ gridColumn: "1 / 2" }}>
-            <Suspense fallback={<div>Loading Bar Chart...</div>}>
-              <LayoffTop10Chart data={data} />
-            </Suspense>
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+              <div>
+                <Suspense fallback={<div>Loading Bar Chart...</div>}>
+                  <LayoffTop10Chart data={data} />
+                </Suspense>
+              </div>
 
-          {/* Second grid item for LayoffMonthlyTimeSeries */}
-          <div style={{ gridColumn: "2 / 4" }}>
-            <Suspense fallback={<div>Loading Time Series...</div>}>
-              <LayoffMonthlyTimeSeries rawData={data} />
-            </Suspense>
+              <div className="col-span-2">
+                <Suspense fallback={<div>Loading Time Series...</div>}>
+                  <LayoffMonthlyTimeSeries rawData={data} />
+                </Suspense>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </TabsContent>
+        <TabsContent value="password">Change your password here.</TabsContent>
+      </Tabs>
     </div>
   );
 }
 
-export default App
+export default App;

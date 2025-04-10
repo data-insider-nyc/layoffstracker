@@ -1,6 +1,8 @@
+import path from "path"
+import tailwindcss from "@tailwindcss/vite"
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
 import { visualizer } from 'rollup-plugin-visualizer'
 import compression from 'vite-plugin-compression'
 
@@ -16,4 +18,9 @@ export default defineConfig({
     }),
     compression(), // Enable gzip compression
   ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
 })
