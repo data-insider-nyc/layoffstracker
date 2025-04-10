@@ -19,7 +19,7 @@ To run the project locally, follow these steps:
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/Kyeongan/trendboard.git
+    git clone https://github.com/data-insider-nyc/trendboard
     cd trendboard
     ```
 
