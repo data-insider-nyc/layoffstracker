@@ -55,7 +55,7 @@ function App() {
                 </TabsList>
                 <TabsContent value="layoff">
                   <div className="p-8 text-center">
-                    <div className="w-4/5 mx-auto">
+                    <div className="w-5/5 mx-auto">
                       <LayoffTable />
                     </div>
 

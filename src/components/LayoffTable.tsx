@@ -26,7 +26,7 @@ const LayoffTable = () => {
       <p>Data from 2020 to the present showing the number of layoffs across various companies.</p>
       <div
         className="overflow-x-auto"
-        style={{ maxHeight: "400px", overflowY: "auto" }}
+        style={{ maxHeight: "300px", overflowY: "auto" }}
       >
         <table className="table-auto w-full text-left border-collapse">
           <thead className="bg-gray-100 sticky top-0">

@@ -40,7 +40,7 @@ const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
   }
 
   return (
-    <div style={{ width: "100%", height: 400 }}>
+    <div style={{ width: "100%", height: 300 }}>
       <h2 className="text-center text-xl mb-4">Top 10 Companies by Layoffs</h2>
       <ResponsiveContainer>
         <BarChart
@@ -49,15 +49,15 @@ const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
           margin={{ top: 10, right: 50, left: 50, bottom: 10 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis type="number" tick={{ fontSize: 10 }} />
-          <YAxis type="category" tick={{ fontSize: 10 }} dataKey="company" />
+          <XAxis type="number" tick={{ fontSize: 11 }} />
+          <YAxis type="category" tick={{ fontSize: 11 }} dataKey="company" />
           <Tooltip />
           <Bar dataKey="laidOff" fill="#8884d8">
             <LabelList
               dataKey="laidOff"
               position="right" // Position the label outside the bar to avoid cutting off
               formatter={(value: number) => value.toLocaleString()} // Ensure 'value' is a number
-              style={{ fontSize: 10, fill: "#333" }}
+              style={{ fontSize: 11, fill: "#333" }}
             />
           </Bar>
         </BarChart>

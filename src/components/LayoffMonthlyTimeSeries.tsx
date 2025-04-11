@@ -57,7 +57,7 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesPros> = ({
   }
 
   return (
-    <div style={{ width: "100%", height: 400 }}>
+    <div style={{ width: "100%", height: 300 }}>
       <h2 className="text-center text-xl mb-4">Monthly Layoffs</h2>
       <ResponsiveContainer>
         <BarChart
@@ -65,15 +65,15 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesPros> = ({
           margin={{ top: 10, right: 50, left: 50, bottom: 10 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" tick={{ fontSize: 10 }} />
-          <YAxis tick={{ fontSize: 10 }} />
+          <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+          <YAxis tick={{ fontSize: 11 }} />
           <Tooltip />
           <Bar dataKey="totalLayoffs" fill="#8884d8">
             <LabelList
               dataKey="totalLayoffs"
               position="top"
               formatter={(value: number) => value.toLocaleString()} // Format numbers with commas
-              style={{ fontSize: 10, fill: "#333" }}
+              style={{ fontSize: 11, fill: "#333" }}
             />
           </Bar>
         </BarChart>
