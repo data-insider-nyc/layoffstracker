@@ -25,6 +25,16 @@ function App() {
         <ul className="flex space-x-6 text-sm">
           <li className="hover:text-blue-600 cursor-pointer">Home</li>
           <li className="hover:text-blue-600 cursor-pointer">About</li>
+          <li>
+            <a
+              href="https://github.com/data-insider-nyc/trendboard"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-700 hover:text-blue-600 cursor-pointer"
+            >
+              Contribute
+            </a>
+          </li>
         </ul>
       </nav>
 
