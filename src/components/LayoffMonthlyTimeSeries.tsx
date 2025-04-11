@@ -62,11 +62,10 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesPros> = ({
       <ResponsiveContainer>
         <BarChart
           data={aggregatedData}
-          margin={{ top: 20, right: 50, left: 50, bottom: 20 }}
+          margin={{ top: 20, right: 0, left: 0, bottom: 20 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-          <YAxis tick={{ fontSize: 11 }} />
           <Tooltip />
           <Bar dataKey="totalLayoffs" fill="#8884d8">
             <LabelList
