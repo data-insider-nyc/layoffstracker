@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Papa from 'papaparse'
+import { Rows } from 'lucide-react'
 
 export interface LayoffData {
   company: string
@@ -42,6 +43,8 @@ export const useLayoffData = (): LayoffData[] => {
             !isNaN(row.date.getTime()) && 
             (!row.headquarters || !row.headquarters.includes("Non-U.S")) // Exclude "Non-U.S" headquarters
           ) // Final validation
+          .filter(row => !row.company.toLowerCase().includes("department")) // Exclude companies with "department"
+          .sort((a, b) => b.date.getTime() - a.date.getTime()) // Sort by date descending
 
         setData(cleaned)
       })
