@@ -37,7 +37,11 @@ export const useLayoffData = (): LayoffData[] => {
               date,
             }
           })
-          .filter(row => row.laidOff > 0 && !isNaN(row.date.getTime())) // Final validation
+          .filter(row => 
+            row.laidOff > 0 && 
+            !isNaN(row.date.getTime()) && 
+            (!row.headquarters || !row.headquarters.includes("Non-U.S")) // Exclude "Non-U.S" headquarters
+          ) // Final validation
 
         setData(cleaned)
       })

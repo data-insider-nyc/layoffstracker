@@ -21,7 +21,7 @@ const LayoffTable = () => {
   return (
     <div className="table-container my-4">
       <h2 className="text-center text-xl mb-4">
-        Layoff Data Overview (2020 - Present)
+        US Layoff Data Overview (2020 - Present)
       </h2>
       <p>Data from 2020 to the present showing the number of layoffs across various companies.</p>
       <div
