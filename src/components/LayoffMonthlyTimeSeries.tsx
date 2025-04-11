@@ -36,7 +36,7 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesPros> = ({
       const month = `${date.getFullYear()}-${String(
         date.getMonth() + 1
       ).padStart(2, "0")}`; // Format: YYYY-MM
-      const year = date.getFullYear();
+      // const year = date.getFullYear();
       monthlyData[month] = (monthlyData[month] || 0) + laidOff;
     });
 

@@ -24,7 +24,6 @@ function App() {
         <h2 className="text-lg font-bold tracking-wide">📊 Trendboard</h2>
         <ul className="flex space-x-6 text-sm">
           <li className="hover:text-blue-600 cursor-pointer">Home</li>
-          <li className="hover:text-blue-600 cursor-pointer">Dashboards</li>
           <li className="hover:text-blue-600 cursor-pointer">About</li>
         </ul>
       </nav>
