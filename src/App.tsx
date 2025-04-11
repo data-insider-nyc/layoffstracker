@@ -6,6 +6,8 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import About from "./components/About";
 import KpiCard from "./components/KpiCard";
 
+import LayoffTop10PieChart from "./components/LayoffTop10PieChart";
+
 const LayoffTop10Chart = React.lazy(
   () => import("./components/LayoffTop10Chart")
 );
@@ -35,6 +37,10 @@ function App() {
   const retainedEmployees = data.reduce(
     (sum, item) => sum + (item.totalEmployees - item.laidOff),
     0
+  );
+  const largestLayoffEvent = data.reduce(
+    (max, item) => (item.laidOff > max.laidOff ? item : max),
+    { company: "", laidOff: 0, date: "" }
   );
 
   return (
@@ -90,25 +96,28 @@ function App() {
                       />
                       <KpiCard
                         title="Largest Layoff Event"
-                        value={largestLayoff}
-                      />
+                        value={largestLayoffEvent.laidOff}
+                        note={`${largestLayoffEvent.company} on ${new Date(largestLayoffEvent.date).toLocaleDateString()}`}
+                      >
+                      </KpiCard>
                     </div>
 
                     <div className="w-5/5 mx-auto">
                       <LayoffTable />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-                      <div className="col-span-2">
-                        <Suspense fallback={<div>Loading Time Series...</div>}>
-                          <LayoffMonthlyTimeSeries rawData={data} />
-                        </Suspense>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+                      <div className="col-span-3">
+                      <Suspense fallback={<div>Loading Time Series...</div>}>
+                        <LayoffMonthlyTimeSeries rawData={data} />
+                      </Suspense>
                       </div>
 
-                      <div>
-                        <Suspense fallback={<div>Loading Bar Chart...</div>}>
-                          <LayoffTop10Chart data={data} />
-                        </Suspense>
+                      <div className="col-span-3 mt-8">
+                      <Suspense fallback={<div>Loading Bar Chart...</div>}>
+                        {/* <LayoffTop10Chart data={data} /> */}
+                        <LayoffTop10PieChart data={data} />
+                      </Suspense>
                       </div>
                     </div>
                   </div>
