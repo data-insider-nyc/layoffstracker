@@ -74,7 +74,7 @@ function App() {
                 <TabsContent value="layoff">
                   <div className="p-8 text-center">
                     {/* Title for KPI Section */}
-                    <h2 className="text-2xl font-bold mb-2">US Layoff Data Overview (2020 - Present)</h2>
+                    <h2 className="text-2xl mb-2">US Layoff Data Overview (2020 - Present)</h2>
                     <p className="text-gray-600 mb-6">Data from 2020 to the present showing the number of layoffs across various companies.</p>
 
                     {/* KPI Cards */}
