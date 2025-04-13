@@ -1,73 +1,82 @@
-import { useLayoffData } from '../hooks/useLayoffData'
-import { Search } from 'lucide-react' // Import the search icon
+import { Header } from "@/types/table";
+import { getTableData, generateFile } from "@/lib/table";
+import { LayoffData, useLayoffData } from "../hooks/useLayoffData";
+import { Download, Search } from "lucide-react"; // Import the search icon
+import { Button } from "./ui/button";
+import Table from "./ui/table";
 
 const LayoffTable = () => {
-  const data = useLayoffData() // Fetch the CSV data using the custom hook
+  const data = useLayoffData(); // Fetch the CSV data using the custom hook
 
   if (data.length === 0) {
-    return <div>Loading...</div> // Loading state while the data is being fetched
+    return <div>Loading...</div>; // Loading state while the data is being fetched
   }
 
-  // Get the headers dynamically from the first row of CSV and add a new "Google Search" column
-  const headers = [...Object.keys(data[0]), "googleSearch"]
-
-  // Utility function to convert strings to camel case
-  const toCamelCase = (str: string) => {
-    return str
-      .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''))
-      .replace(/^[a-z]/, (group) => group.toUpperCase())
-  }
+  const headers: Header<LayoffData>[] = [
+    {
+      name: "Company",
+      accessor: "company",
+    },
+    {
+      name: "City",
+      accessor: "headquarters",
+    },
+    {
+      name: "Laid Off",
+      accessor: "laidOff",
+    },
+    {
+      name: "Date",
+      accessor: "date",
+    },
+    {
+      name: "Google",
+      accessor: "company",
+      render: (_, row) => (
+        <a
+          href={`https://www.google.com/search?q=${encodeURIComponent(
+            `${row.company} ${row.headquarters} layoffs`
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 flex items-center justify-center"
+        >
+          <Search className="w-5 h-5" />
+        </a>
+      ),
+      csv: (row) =>
+        `https://www.google.com/search?q=${encodeURIComponent(
+          `${row.company} ${row.headquarters} layoffs`
+        )}`,
+    },
+  ];
 
   return (
-    <div className="table-container my-4">
-      <div
-        className="overflow-x-auto"
-        style={{ maxHeight: "300px", overflowY: "auto" }}
-      >
-        <table className="table-auto w-full text-left border-collapse">
-          <thead className="bg-gray-100 sticky top-0">
-            <tr>
-              {headers.map((header) => (
-                <th key={header} className="border px-4 py-2 font-semibold">
-                  {header === "googleSearch"
-                    ? "Google"
-                    : header === "headquarters" // Rename "headquarters" to "City"
-                    ? "City"
-                    : toCamelCase(header)}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row, index) => (
-              <tr key={index} className="hover:bg-gray-50">
-                {headers.map((header) => (
-                  <td key={header} className="border px-4 py-2">
-                    {header === "date" && row[header] instanceof Date
-                      ? row[header].toLocaleDateString() // Format Date object as a readable string
-                      : header === "googleSearch" // Generate Google Search link
-                      ? (
-                        <a
-                          href={`https://www.google.com/search?q=${encodeURIComponent(
-                            `${row.company} ${row.headquarters} layoffs`
-                          )}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 flex items-center justify-center"
-                        >
-                          <Search className="w-5 h-5" /> {/* Search icon */}
-                        </a>
-                      )
-                      : row[header]}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <>
+      <div className="w-full flex justify-end">
+        <Button
+          type="button"
+          onClick={() => generateFile(getTableData(data, headers), "Trendboard", "csv")}
+        >
+          <Download className="w-5 h-5 stroke-primary-foreground" /> CSV
+        </Button>
+        <Button
+          type="button"
+          onClick={() => generateFile(getTableData(data, headers), "Trendboard", "excel")}
+        >
+          <Download className="w-5 h-5 stroke-primary-foreground" /> Excel
+        </Button>
       </div>
-    </div>
+      <div className="table-container my-4">
+        <div
+          className="overflow-x-auto"
+          style={{ maxHeight: "300px", overflowY: "auto" }}
+        >
+          <Table data={data} headers={headers} />
+        </div>
+      </div>
+    </>
   );
-}
+};
 
-export default LayoffTable
+export default LayoffTable;
