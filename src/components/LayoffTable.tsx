@@ -1,4 +1,5 @@
-import { getTableData, Header, generateFile } from "@/util/table";
+import { Header } from "@/types/table";
+import { getTableData, generateFile } from "@/lib/table";
 import { LayoffData, useLayoffData } from "../hooks/useLayoffData";
 import { Download, Search } from "lucide-react"; // Import the search icon
 import { Button } from "./ui/button";

@@ -1,10 +1,5 @@
-import { Header } from "@/util/table";
+import { TableProps } from "@/types/table";
 import { JSX } from "react";
-
-interface TableProps<T> {
-  data: T[];
-  headers: Header<T>[];
-}
 
 const Table = <T,>({ data, headers }: TableProps<T>): JSX.Element => {
   return (
