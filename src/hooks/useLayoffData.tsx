@@ -13,7 +13,7 @@ export const useLayoffData = (): LayoffData[] => {
   const [data, setData] = useState<LayoffData[]>([])
 
   useEffect(() => {
-    fetch('/trendboard/data/layoffs-cleaned.csv')
+    fetch('/trendboard/data/layoffs.csv')
       .then((res) => res.text())
       .then((csv) => {
         const parsed = Papa.parse(csv, { header: true, skipEmptyLines: true }).data as Array<{
