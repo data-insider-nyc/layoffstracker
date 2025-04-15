@@ -45,20 +45,26 @@ const LayoffTable = () => {
                 {headers.map((header) => (
                   <td key={header} className="border px-4 py-2">
                     {header === "company" ? (
-                        <div className="flex items-center">
-                          <img
+                      <div className="flex items-center">
+                        <img
                           src={
                             row.company === "MITRE"
-                            ? "https://logo.clearbit.com/mitre.org"
-                            : `https://logo.clearbit.com/${row.company.toLowerCase().replace(/\s+/g, '')}.com`
+                              ? "https://logo.clearbit.com/mitre.org"
+                              : `https://logo.clearbit.com/${row.company.toLowerCase().replace(/\s+/g, "")}.com`
                           }
                           alt={`${row.company} logo`}
                           className="w-6 h-6 mr-2"
-                          />
-                          {row.company}
-                        </div>
+                          onError={(e) => (e.currentTarget.style.display = "none")} // Hide image if not found
+                        />
+                        {row.company}
+                      </div>
                     ) : header === "date" ? (
-                      row[header]
+                      // Format the date before rendering
+                      new Date(row[header]).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
                     ) : header === "googleSearch" ? (
                       <a
                         href={`https://www.google.com/search?q=${encodeURIComponent(
