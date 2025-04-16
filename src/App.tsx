@@ -6,29 +6,36 @@ import About from "./components/About";
 import KpiCard from "./components/KpiCard";
 import LayoffTop10PieChart from "./components/LayoffTop10PieChart";
 
-const LayoffTop10Chart = React.lazy(
-  () => import("./components/LayoffTop10Chart")
-);
-const LayoffMonthlyTimeSeries = React.lazy(
-  () => import("./components/LayoffMonthlyTimeSeries")
-);
+const LayoffTop10Chart = React.lazy(() => import("./components/LayoffTop10Chart"));
+const LayoffMonthlyTimeSeries = React.lazy(() => import("./components/LayoffMonthlyTimeSeries"));
 
 function App() {
   const data = useLayoffData();
   const [selectedYear, setSelectedYear] = useState("ALL");
+  const [selectedCategory, setSelectedCategory] = useState("ALL"); // New filter state
 
   if (data.length === 0) {
     return <div>Loading...</div>;
   }
 
   // Filter data based on the selected year
-  const filteredData =
+  const yearFilteredData =
     selectedYear === "ALL"
       ? data
       : data.filter((item) =>
           selectedYear === "YTD"
             ? new Date(item.date).getFullYear() === new Date().getFullYear()
             : new Date(item.date).getFullYear() === parseInt(selectedYear)
+        );
+
+  // Filter data based on the selected category
+  const filteredData =
+    selectedCategory === "ALL"
+      ? yearFilteredData
+      : yearFilteredData.filter((item) =>
+          selectedCategory === "Doge"
+            ? item.company.includes("Department")
+            : !item.company.includes("Department")
         );
 
   // Calculate KPIs
@@ -84,28 +91,48 @@ function App() {
             element={
               <div className="p-8 text-center">
                 {/* Year Filter */}
-                <div className="mb-6">
+                <div className="mb-6 flex space-x-8 justify-start">
+                  {/* Year Filter */}
+                  <div>
                   <label htmlFor="yearFilter" className="mr-4 font-semibold">
-                    Filter by Year:
+                    Year:
                   </label>
-                    <select
+                  <select
                     id="yearFilter"
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(e.target.value)}
                     className="border border-gray-300 rounded px-4 py-2"
-                    >
+                  >
                     <option value="ALL">ALL</option>
                     <option value="YTD">YTD</option>
                     {Array.from(
-                      new Set(data.map((item) => new Date(item.date).getFullYear()))
+                    new Set(data.map((item) => new Date(item.date).getFullYear()))
                     )
-                      .sort((a, b) => b - a)
-                      .map((year) => (
+                    .sort((a, b) => b - a)
+                    .map((year) => (
                       <option key={year} value={year}>
-                        {year}
+                      {year}
                       </option>
-                      ))}
-                    </select>
+                    ))}
+                  </select>
+                  </div>
+
+                  {/* Category Filter */}
+                  <div>
+                  <label htmlFor="categoryFilter" className="mr-4 font-semibold">
+                    Category:
+                  </label>
+                  <select
+                    id="categoryFilter"
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="border border-gray-300 rounded px-4 py-2"
+                  >
+                    <option value="ALL">ALL</option>
+                    <option value="General">General</option>
+                    <option value="Doge">Doge</option>
+                  </select>
+                  </div>
                 </div>
 
                 {/* Title for KPI Section */}

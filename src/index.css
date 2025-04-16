@@ -55,10 +55,12 @@ a:hover {
 }
 
 body {
-  margin: 0;
+  margin: 0 auto;           /* Center the body horizontally */
   justify-content: center;  /* Horizontally center content */
   align-items: center;      /* Vertically center content */
   width: 100%;              /* Ensure body stretches to full width */
+  max-width: 1200px;        /* Limit the maximum width */
+  padding: 0 1rem;          /* Add padding on left and right */
   @apply text-[13px];
 }
 
