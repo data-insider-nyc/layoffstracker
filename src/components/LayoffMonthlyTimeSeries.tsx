@@ -9,23 +9,21 @@ import {
   ResponsiveContainer,
   LabelList,
 } from "recharts";
-import { useLayoffData } from "../hooks/useLayoffData";
 
 type AggregatedData = {
   month: string; // Format: YYYY-MM
   totalLayoffs: number;
 };
 
-type LayoffMonthlyTimeSeriesPros = {
-  data: Array<{
-    company: string;
-    headquarters?: string;
-    laidOff: number;
-    date: Date;
-  }>;
-};
+// type LayoffMonthlyTimeSeriesProps = {
+//   data: Array<Record<string, any>>; // Define the type for the data prop
+// };
 
-const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesPros> = ({
+interface LayoffMonthlyTimeSeriesProps {
+  data: Array<Record<string, any>>; // Define the type for the data prop
+}
+
+const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesProps> = ({
   data,
 }) => {
   // Function to group data by month
@@ -36,19 +34,14 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesPros> = ({
       const month = `${date.getFullYear()}-${String(
         date.getMonth() + 1
       ).padStart(2, "0")}`; // Format: YYYY-MM
-      // const year = date.getFullYear();
       monthlyData[month] = (monthlyData[month] || 0) + laidOff;
     });
 
     // Convert the aggregated object into an array and sort by month (oldest to newest)
-    const now = new Date();
-    const twoYearsAgo = new Date(now.getFullYear() - 2, now.getMonth() + 1);
-
     return Object.entries(monthlyData)
       .map(([month, totalLayoffs]) => ({ month, totalLayoffs }))
-      .filter(({ month }) => new Date(month) >= twoYearsAgo)
       .sort(
-      (a, b) => new Date(a.month).getTime() - new Date(b.month).getTime()
+        (a, b) => new Date(a.month).getTime() - new Date(b.month).getTime()
       );
   }, [data]);
 
@@ -81,10 +74,4 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesPros> = ({
   );
 };
 
-const LayoffMonthlyTimeSeriesChart = () => {
-  const data = useLayoffData();
-
-  return <LayoffMonthlyTimeSeries data={data} />;
-};
-
-export default LayoffMonthlyTimeSeriesChart;
+export default LayoffMonthlyTimeSeries;

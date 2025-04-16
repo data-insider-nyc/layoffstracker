@@ -1,10 +1,11 @@
-import { useLayoffData } from "../hooks/useLayoffData";
 import { Search } from "lucide-react"; // Import the search icon
 import { companyLogos } from "../data/companyLogos";
 
-const LayoffTable = () => {
-  const data = useLayoffData(); // Fetch the CSV data using the custom hook
+interface LayoffTableProps {
+  data: Array<Record<string, any>>; // Define the type for the data prop
+}
 
+const LayoffTable: React.FC<LayoffTableProps> = ({ data }) => {
   if (data.length === 0) {
     return <div>Loading...</div>; // Loading state while the data is being fetched
   }
