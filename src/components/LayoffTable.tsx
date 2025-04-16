@@ -23,7 +23,7 @@ const LayoffTable = () => {
     <div className="table-container my-4">
       <div
         className="overflow-x-auto"
-        style={{ maxHeight: "300px", overflowY: "auto" }}
+        style={{ maxHeight: "400px", overflowY: "auto" }}
       >
         <table className="table-auto w-full text-left border-collapse">
           <thead className="bg-gray-100 sticky top-0">
@@ -31,7 +31,7 @@ const LayoffTable = () => {
               {headers.map((header) => (
                 <th key={header} className="border px-4 py-2 font-semibold">
                   {header === "googleSearch"
-                    ? "Google"
+                    ? "Source"
                     : header === "headquarters" // Rename "headquarters" to "City"
                     ? "City"
                     : toCamelCase(header)}
@@ -45,19 +45,21 @@ const LayoffTable = () => {
                 {headers.map((header) => (
                   <td key={header} className="border px-4 py-2">
                     {header === "company" ? (
-                      <div className="flex items-center">
+                        <div className="flex items-center">
                         <img
                           src={
-                            row.company === "MITRE"
-                              ? "https://logo.clearbit.com/mitre.org"
-                              : `https://logo.clearbit.com/${row.company.toLowerCase().replace(/\s+/g, "")}.com`
+                          row.company.includes("Department")
+                            ? "https://logo.clearbit.com/doge.gov"
+                            : row.company === "MITRE"
+                            ? "https://logo.clearbit.com/mitre.org"
+                            : `https://logo.clearbit.com/${row.company.toLowerCase().replace(/\s+/g, "")}.com`
                           }
                           alt={`${row.company} logo`}
                           className="w-6 h-6 mr-2"
                           onError={(e) => (e.currentTarget.style.display = "none")} // Hide image if not found
                         />
                         {row.company}
-                      </div>
+                        </div>
                     ) : header === "date" ? (
                       // Format the date before rendering
                       new Date(row[header]).toLocaleDateString("en-US", {
