@@ -41,7 +41,7 @@ const LayoffTop10PieChart: React.FC<LayoffTop10PieChartProps> = ({ data }) => {
     return Object.entries(companyData)
       .map(([company, laidOff]) => ({ company, laidOff }))
       .sort((a, b) => b.laidOff - a.laidOff) // Sort by layoffs in descending order
-      .slice(0, 10); // Take the top 10 companies
+      .slice(0, 5); // Take the top 10 companies
   }, [data]);
 
   if (aggregatedData.length === 0) {
@@ -50,7 +50,7 @@ const LayoffTop10PieChart: React.FC<LayoffTop10PieChartProps> = ({ data }) => {
 
   return (
     <div style={{ width: "100%", height: 350 }}>
-      <h2 className="text-center text-xl mb-4">Top 10 Companies by Layoffs</h2>
+      <h2 className="text-center text-xl mb-4">Top Companies by Layoffs</h2>
       <ResponsiveContainer>
         <PieChart>
           <Pie
