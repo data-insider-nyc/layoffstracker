@@ -11,37 +11,36 @@ import {
 } from "recharts";
 
 type AggregatedData = {
-  month: string; // Format: YYYY-MM
+  period: string; // Format: YYYY-MM or YYYY-MM-DD
   totalLayoffs: number;
 };
 
-// type LayoffMonthlyTimeSeriesProps = {
-//   data: Array<Record<string, any>>; // Define the type for the data prop
-// };
-
 interface LayoffMonthlyTimeSeriesProps {
-  data: Array<Record<string, any>>; // Define the type for the data prop
+  data: Array<{ date: Date; laidOff: number }>; // Define the type for the data prop
 }
 
 const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesProps> = ({
   data,
 }) => {
-  // Function to group data by month
+  // Function to group data by period (daily or monthly)
   const aggregatedData: AggregatedData[] = React.useMemo(() => {
-    const monthlyData: { [key: string]: number } = {};
+    const isDaily = data.length <= 30; // Use daily granularity if data length is small
+    const periodData: { [key: string]: number } = {};
 
     data.forEach(({ date, laidOff }) => {
-      const month = `${date.getFullYear()}-${String(
-        date.getMonth() + 1
-      ).padStart(2, "0")}`; // Format: YYYY-MM
-      monthlyData[month] = (monthlyData[month] || 0) + laidOff;
+      const period = isDaily
+        ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+            date.getDate()
+          ).padStart(2, "0")}` // Format: YYYY-MM-DD
+        : `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`; // Format: YYYY-MM
+      periodData[period] = (periodData[period] || 0) + laidOff;
     });
 
-    // Convert the aggregated object into an array and sort by month (oldest to newest)
-    return Object.entries(monthlyData)
-      .map(([month, totalLayoffs]) => ({ month, totalLayoffs }))
+    // Convert the aggregated object into an array and sort by period (oldest to newest)
+    return Object.entries(periodData)
+      .map(([period, totalLayoffs]) => ({ period, totalLayoffs }))
       .sort(
-        (a, b) => new Date(a.month).getTime() - new Date(b.month).getTime()
+        (a, b) => new Date(a.period).getTime() - new Date(b.period).getTime()
       );
   }, [data]);
 
@@ -51,14 +50,16 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesProps> = ({
 
   return (
     <div style={{ width: "100%", height: 350 }}>
-      <h2 className="text-center text-xl mb-4">Monthly Layoffs</h2>
+      <h2 className="text-center text-xl mb-4">
+        {data.length <= 30 ? "Daily Layoffs" : "Monthly Layoffs"}
+      </h2>
       <ResponsiveContainer>
         <BarChart
           data={aggregatedData}
           margin={{ top: 20, right: 0, left: 0, bottom: 20 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+          <XAxis dataKey="period" tick={{ fontSize: 11 }} />
           <Tooltip />
           <Bar dataKey="totalLayoffs" fill="#8884d8">
             <LabelList

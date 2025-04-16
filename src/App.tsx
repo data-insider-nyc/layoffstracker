@@ -91,9 +91,11 @@ function App() {
             element={
               <div className="p-8 text-center">
                 {/* Year Filter */}
-                <div className="mb-6">
+                <div className="mb-6 flex space-x-8 justify-start">
+                  {/* Year Filter */}
+                  <div>
                   <label htmlFor="yearFilter" className="mr-4 font-semibold">
-                    Filter by Year:
+                    Year:
                   </label>
                   <select
                     id="yearFilter"
@@ -104,21 +106,21 @@ function App() {
                     <option value="ALL">ALL</option>
                     <option value="YTD">YTD</option>
                     {Array.from(
-                      new Set(data.map((item) => new Date(item.date).getFullYear()))
+                    new Set(data.map((item) => new Date(item.date).getFullYear()))
                     )
-                      .sort((a, b) => b - a)
-                      .map((year) => (
-                        <option key={year} value={year}>
-                          {year}
-                        </option>
-                      ))}
+                    .sort((a, b) => b - a)
+                    .map((year) => (
+                      <option key={year} value={year}>
+                      {year}
+                      </option>
+                    ))}
                   </select>
-                </div>
+                  </div>
 
-                {/* Category Filter */}
-                <div className="mb-6">
+                  {/* Category Filter */}
+                  <div>
                   <label htmlFor="categoryFilter" className="mr-4 font-semibold">
-                    Filter by Category:
+                    Category:
                   </label>
                   <select
                     id="categoryFilter"
@@ -130,6 +132,7 @@ function App() {
                     <option value="General">General</option>
                     <option value="Doge">Doge</option>
                   </select>
+                  </div>
                 </div>
 
                 {/* Title for KPI Section */}
