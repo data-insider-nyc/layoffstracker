@@ -1,11 +1,9 @@
-import React, { Suspense } from "react";
+import React, { useState, Suspense } from "react";
 import LayoffTable from "./components/LayoffTable";
 import { useLayoffData } from "./hooks/useLayoffData";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import About from "./components/About";
 import KpiCard from "./components/KpiCard";
-
 import LayoffTop10PieChart from "./components/LayoffTop10PieChart";
 
 const LayoffTop10Chart = React.lazy(
@@ -17,28 +15,39 @@ const LayoffMonthlyTimeSeries = React.lazy(
 
 function App() {
   const data = useLayoffData();
+  const [selectedYear, setSelectedYear] = useState("ALL");
 
   if (data.length === 0) {
     return <div>Loading...</div>;
   }
 
+  // Filter data based on the selected year
+  const filteredData =
+    selectedYear === "ALL"
+      ? data
+      : data.filter((item) =>
+          selectedYear === "YTD"
+            ? new Date(item.date).getFullYear() === new Date().getFullYear()
+            : new Date(item.date).getFullYear() === parseInt(selectedYear)
+        );
+
   // Calculate KPIs
-  const totalLayoffs = data.reduce((sum, item) => sum + item.laidOff, 0);
-  const totalCompanies = data.length;
+  const totalLayoffs = filteredData.reduce((sum, item) => sum + item.laidOff, 0);
+  const totalCompanies = filteredData.length;
   const averageLayoffsPerCompany = Math.round(totalLayoffs / totalCompanies);
-  const largestLayoff = Math.max(...data.map((item) => item.laidOff));
-  const topIndustry = data.reduce((acc, item) => {
+  const largestLayoff = Math.max(...filteredData.map((item) => item.laidOff));
+  const topIndustry = filteredData.reduce((acc, item) => {
     acc[item.industry] = (acc[item.industry] || 0) + item.laidOff;
     return acc;
   }, {});
   const topIndustryName = Object.keys(topIndustry).reduce((a, b) =>
     topIndustry[a] > topIndustry[b] ? a : b
   );
-  const retainedEmployees = data.reduce(
+  const retainedEmployees = filteredData.reduce(
     (sum, item) => sum + (item.totalEmployees - item.laidOff),
     0
   );
-  const largestLayoffEvent = data.reduce(
+  const largestLayoffEvent = filteredData.reduce(
     (max, item) => (item.laidOff > max.laidOff ? item : max),
     { company: "", laidOff: 0, date: "" }
   );
@@ -50,7 +59,7 @@ function App() {
           <h2 className="text-lg font-bold tracking-wide">📊 Trendboard</h2>
           <ul className="flex space-x-6 text-sm">
             <li className="hover:text-blue-600 cursor-pointer">
-              <Link to="/">Home</Link>
+              <Link to="/trendboard">Home</Link>
             </li>
             <li className="hover:text-blue-600 cursor-pointer">
               <Link to="/about">About</Link>
@@ -73,59 +82,70 @@ function App() {
           <Route
             path="/"
             element={
-              <Tabs defaultValue="layoff" className="">
-                <TabsList>
-                  <TabsTrigger value="layoff">Layoffs Tracker</TabsTrigger>
-                </TabsList>
-                <TabsContent value="layoff">
-                  <div className="p-8 text-center">
-                    {/* Title for KPI Section */}
-                    <h2 className="text-2xl mb-2">US Layoff Data Overview (2020 - Present)</h2>
-                    <p className="text-gray-600 mb-6">Data from 2020 to the present showing the number of layoffs across various companies.</p>
+              <div className="p-8 text-center">
+                {/* Year Filter */}
+                <div className="mb-6">
+                  <label htmlFor="yearFilter" className="mr-4 font-semibold">
+                    Filter by Year:
+                  </label>
+                  <select
+                    id="yearFilter"
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                    className="border border-gray-300 rounded px-4 py-2"
+                  >
+                    <option value="ALL">ALL</option>
+                    <option value="YTD">YTD</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                  </select>
+                </div>
 
-                    {/* KPI Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                      <KpiCard title="Total Laid Off" value={totalLayoffs} />
-                      <KpiCard
-                        title="Total Companies with Layoffs"
-                        value={totalCompanies}
-                      />
-                      <KpiCard
-                        title="Average Layoffs per Company"
-                        value={averageLayoffsPerCompany}
-                      />
-                      <KpiCard
-                        title="Largest Layoff Event"
-                        value={largestLayoffEvent.laidOff}
-                        note={`${largestLayoffEvent.company} on ${new Date(largestLayoffEvent.date).toLocaleDateString()}`}
-                      >
-                      </KpiCard>
-                    </div>
+                {/* Title for KPI Section */}
+                <h2 className="text-2xl mb-2">US Layoff Data Overview (2020 - Present)</h2>
+                <p className="text-gray-600 mb-6">
+                  Data from 2020 to the present showing the number of layoffs across various companies.
+                </p>
 
-                    <div className="w-5/5 mx-auto">
-                      <LayoffTable />
-                    </div>
+                {/* KPI Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                  <KpiCard title="Total Laid Off" value={totalLayoffs} />
+                  <KpiCard
+                    title="Total Companies with Layoffs"
+                    value={totalCompanies}
+                  />
+                  <KpiCard
+                    title="Average Layoffs per Company"
+                    value={averageLayoffsPerCompany}
+                  />
+                  <KpiCard
+                    title="Largest Layoff Event"
+                    value={largestLayoffEvent.laidOff}
+                    note={`${largestLayoffEvent.company} on ${new Date(
+                      largestLayoffEvent.date
+                    ).toLocaleDateString()}`}
+                  />
+                </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-                      <div className="col-span-3">
-                      <Suspense fallback={<div>Loading Time Series...</div>}>
-                        <LayoffMonthlyTimeSeries rawData={data} />
-                      </Suspense>
-                      </div>
+                <div className="w-5/5 mx-auto">
+                  <LayoffTable data={filteredData} />
+                </div>
 
-                      <div className="col-span-3 mt-8">
-                      <Suspense fallback={<div>Loading Bar Chart...</div>}>
-                        {/* <LayoffTop10Chart data={data} /> */}
-                        <LayoffTop10PieChart data={data} />
-                      </Suspense>
-                      </div>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+                  <div className="col-span-3">
+                    <Suspense fallback={<div>Loading Time Series...</div>}>
+                      <LayoffMonthlyTimeSeries rawData={filteredData} />
+                    </Suspense>
                   </div>
-                </TabsContent>
-                <TabsContent value="password">
-                  Change your password here.
-                </TabsContent>
-              </Tabs>
+
+                  <div className="col-span-3 mt-8">
+                    <Suspense fallback={<div>Loading Bar Chart...</div>}>
+                      <LayoffTop10PieChart data={filteredData} />
+                    </Suspense>
+                  </div>
+                </div>
+              </div>
             }
           />
         </Routes>
