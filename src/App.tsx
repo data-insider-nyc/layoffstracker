@@ -88,18 +88,24 @@ function App() {
                   <label htmlFor="yearFilter" className="mr-4 font-semibold">
                     Filter by Year:
                   </label>
-                  <select
+                    <select
                     id="yearFilter"
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(e.target.value)}
                     className="border border-gray-300 rounded px-4 py-2"
-                  >
+                    >
                     <option value="ALL">ALL</option>
                     <option value="YTD">YTD</option>
-                    <option value="2025">2025</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                  </select>
+                    {Array.from(
+                      new Set(data.map((item) => new Date(item.date).getFullYear()))
+                    )
+                      .sort((a, b) => b - a)
+                      .map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                      ))}
+                    </select>
                 </div>
 
                 {/* Title for KPI Section */}
@@ -135,7 +141,7 @@ function App() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
                   <div className="col-span-3">
                     <Suspense fallback={<div>Loading Time Series...</div>}>
-                      <LayoffMonthlyTimeSeries rawData={filteredData} />
+                      <LayoffMonthlyTimeSeries data={filteredData} />
                     </Suspense>
                   </div>
 
