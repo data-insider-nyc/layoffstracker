@@ -32,7 +32,7 @@ const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
     return Object.entries(companyData)
       .map(([company, laidOff]) => ({ company, laidOff }))
       .sort((a, b) => b.laidOff - a.laidOff)
-      .slice(0, 10); // Take the top 10 companies
+      .slice(0, 15); // Take the top 10 companies
   }, [data]);
 
   if (aggregatedData.length === 0) {
@@ -40,8 +40,8 @@ const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
   }
 
   return (
-    <div style={{ width: "100%", height: 350 }}>
-      <h2 className="text-center text-xl mb-4">Top 10 Companies by Layoffs</h2>
+    <div style={{ width: "100%", height: 450 }}>
+      <h2 className="text-center text-xl mb-4">Top Companies by Layoffs</h2>
       <ResponsiveContainer>
         <BarChart
           data={aggregatedData}
@@ -49,9 +49,12 @@ const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
           margin={{ top: 20, right: 50, left: 0, bottom: 20 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis type="number" tick={{ fontSize: 11 }} />
+          <XAxis type="number" tick={{ fontSize: 11 }} 
+            tickFormatter={(value) => value.toLocaleString()}
+          />
           <YAxis type="category" tick={{ fontSize: 11 }}
-            width={300} // Adjust width to accommodate long company names
+            width={150}
+          
           dataKey="company" />
           <Tooltip />
           <Bar dataKey="laidOff" fill="#8884d8">

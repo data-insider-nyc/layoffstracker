@@ -174,7 +174,7 @@ function App() {
 
                   <div className="col-span-3 mt-8">
                     <Suspense fallback={<div>Loading Bar Chart...</div>}>
-                      <LayoffTop10PieChart data={filteredData} />
+                      <LayoffTop10Chart data={filteredData} />
                     </Suspense>
                   </div>
                 </div>
