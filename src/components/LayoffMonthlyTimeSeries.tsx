@@ -1,13 +1,12 @@
 import React from "react";
 import {
-  BarChart,
-  Bar,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  LabelList,
 } from "recharts";
 
 type AggregatedData = {
@@ -54,22 +53,29 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesProps> = ({
         {data.length <= 30 ? "Daily Layoffs" : "Monthly Layoffs"}
       </h2>
       <ResponsiveContainer>
-        <BarChart
+        <AreaChart
           data={aggregatedData}
           margin={{ top: 20, right: 0, left: 0, bottom: 20 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="period" tick={{ fontSize: 11 }} />
-          <Tooltip />
-          <Bar dataKey="totalLayoffs" fill="#8884d8">
-            <LabelList
-              dataKey="totalLayoffs"
-              position="top"
-              formatter={(value: number) => value.toLocaleString()} // Format numbers with commas
-              style={{ fontSize: 11, fill: "#333" }}
-            />
-          </Bar>
-        </BarChart>
+          <YAxis
+            dataKey={"totalLayoffs"}
+            tick={{ fontSize: 11 }}
+            tickFormatter={(value) => value.toLocaleString()} // Format Y-axis labels
+          />
+          <Tooltip
+            contentStyle={{ fontSize: 11 }}
+            labelStyle={{ fontSize: 11 }}
+          />
+          <Area
+            type="monotone"
+            dataKey="totalLayoffs"
+            stroke="#8884d8"
+            fill="#8884d8"
+            strokeWidth={2}
+          />
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );
