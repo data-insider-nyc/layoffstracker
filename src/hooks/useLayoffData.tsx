@@ -53,7 +53,5 @@ export const useLayoffData = (): LayoffData[] => {
       })
   }, [])
 
-  console.log('Layoff data:', data)
-
   return data
 }
