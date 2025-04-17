@@ -8,6 +8,7 @@ import LayoffTop10PieChart from "./components/LayoffTop10PieChart";
 
 const LayoffTop10Chart = React.lazy(() => import("./components/LayoffTop10Chart"));
 const LayoffMonthlyTimeSeries = React.lazy(() => import("./components/LayoffMonthlyTimeSeries"));
+const LayoffTopLocation = React.lazy(() => import("./components/LayoffTopLocation"));
 
 function App() {
   const data = useLayoffData();
@@ -160,6 +161,12 @@ function App() {
                   <div className="col-span-3 mt-8">
                     <Suspense fallback={<div>Loading Bar Chart...</div>}>
                       <LayoffTop10Chart data={filteredData} />
+                    </Suspense>
+                  </div>
+                  
+                  <div className="col-span-3 mt-8">
+                    <Suspense fallback={<div>Loading Bar Chart...</div>}>
+                      <LayoffTopLocation data={filteredData} />
                     </Suspense>
                   </div>
                 </div>
