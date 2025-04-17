@@ -34,7 +34,7 @@ const LayoffTable: React.FC<LayoffTableProps> = ({ data }) => {
                   {header === "googleSearch"
                     ? "Source"
                     : header === "headquarters" // Rename "headquarters" to "City"
-                    ? "City"
+                    ? "Location"
                     : toCamelCase(header)}
                 </th>
               ))}
@@ -79,6 +79,8 @@ const LayoffTable: React.FC<LayoffTableProps> = ({ data }) => {
                       >
                         <Search className="w-5 h-5" /> {/* Search icon */}
                       </a>
+                    ) : header === "laidOff" ? (
+                      row[header].toLocaleString()
                     ) : (
                       row[header]
                     )}

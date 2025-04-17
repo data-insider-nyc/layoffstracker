@@ -50,32 +50,53 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesProps> = ({
   return (
     <div style={{ width: "100%", height: 350 }}>
       <h2 className="text-center text-xl mb-4">
-        {data.length <= 30 ? "Daily Layoffs" : "Monthly Layoffs"}
+      {data.length <= 30 ? "Daily Layoffs" : "Monthly Layoffs"}
       </h2>
       <ResponsiveContainer>
-        <AreaChart
-          data={aggregatedData}
-          margin={{ top: 20, right: 0, left: 0, bottom: 20 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="period" tick={{ fontSize: 11 }} />
-          <YAxis
-            dataKey={"totalLayoffs"}
-            tick={{ fontSize: 11 }}
-            tickFormatter={(value) => value.toLocaleString()} // Format Y-axis labels
-          />
-          <Tooltip
-            contentStyle={{ fontSize: 11 }}
-            labelStyle={{ fontSize: 11 }}
-          />
-          <Area
-            type="monotone"
-            dataKey="totalLayoffs"
-            stroke="#8884d8"
-            fill="#8884d8"
-            strokeWidth={2}
-          />
-        </AreaChart>
+      <AreaChart
+        data={aggregatedData}
+        margin={{ top: 20, right: 0, left: 0, bottom: 20 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="period" tick={{ fontSize: 11 }} />
+        <YAxis
+        dataKey={"totalLayoffs"}
+        tick={{ fontSize: 11 }}
+        tickFormatter={(value) => value.toLocaleString()} // Format Y-axis labels
+        />
+        <Tooltip
+        contentStyle={{ fontSize: 11 }}
+        labelStyle={{ fontSize: 11 }}
+        formatter={(value: number) => [`No. of Layoffs: ${value.toLocaleString()}`]} // Format tooltip values
+        />
+        <Area
+        type="monotone"
+        dataKey="totalLayoffs"
+        stroke="#8884d8"
+        fill="#8884d8"
+        strokeWidth={2}
+        label={({ x, y, value }) => {
+          const topValues = aggregatedData
+          .map((d) => d.totalLayoffs)
+          .sort((a, b) => b - a)
+          .slice(0, 5); // Get top 3 values
+          if (topValues.includes(value)) {
+          return (
+            <text
+            x={x}
+            y={y - 10}
+            fill="#000"
+            fontSize={10}
+            textAnchor="middle"
+            >
+            {value.toLocaleString()}
+            </text>
+          );
+          }
+          return null;
+        }}
+        />
+      </AreaChart>
       </ResponsiveContainer>
     </div>
   );

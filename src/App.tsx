@@ -66,7 +66,7 @@ function App() {
           <h2 className="text-lg font-bold tracking-wide">📊 Trendboard</h2>
           <ul className="flex space-x-6 text-sm">
             <li className="hover:text-blue-600 cursor-pointer">
-              <Link to="/trendboard">Home</Link>
+              <Link to="/">Home</Link>
             </li>
             <li className="hover:text-blue-600 cursor-pointer">
               <Link to="/about">About</Link>
@@ -89,7 +89,7 @@ function App() {
           <Route
             path="/"
             element={
-              <div className="p-8 text-center">
+              <div className="p-4 text-center">
                 {/* Year Filter */}
                 <div className="mb-6 flex space-x-8 justify-start">
                   {/* Year Filter */}
