@@ -1,4 +1,4 @@
-Company,HQ,layoffs,Date
+Company,headquarter,layoff,Date
 Department of Agriculture (USDA),Washington D.C.,5714,2/13/2025
 Department of Defense (DoD),Washington D.C.,5420,3/7/2025
 Department of Education (ED),Washington D.C.,1529,3/11/2025
@@ -9,6 +9,12 @@ Department of Commerce (DOC),Washington D.C.,1380,3/10/2025
 Department of The Treasury,Washington D.C.,27616,4/4/2025
 Department of State (DOS),Washington D.C.,10000,3/28/2025
 Department of Resignation Program,Washington D.C.,77000,2/13/2025
+Department of Housing and Urban Development (HUD),Washington D.C.,4800,2/24/2025
+Department of the Interior (DOI),Washington D.C.,2020,2/14/2025
+Department of Transportation (DOT),Washington D.C.,775,2/17/2025
+Department of Veterans Affairs (VA),Washington D.C.,2400,3/5/2025
+Department of Labor (DOL),Washington D.C.,170,2/14/2025
+Department of Other Agencies,Washington D.C.,5271,3/10/2025
 MITRE,McLean VA,650,4/3/2025
 Tract,"London,Non-U.S.",,4/3/2025
 Automattic,SF Bay Area,281,4/2/2025
