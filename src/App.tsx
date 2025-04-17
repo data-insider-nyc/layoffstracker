@@ -12,7 +12,7 @@ const LayoffMonthlyTimeSeries = React.lazy(() => import("./components/LayoffMont
 function App() {
   const data = useLayoffData();
   const [selectedYear, setSelectedYear] = useState("ALL");
-  const [selectedCategory, setSelectedCategory] = useState("ALL"); // New filter state
+  const [selectedCategory, setSelectedCategory] = useState("ALL");
 
   if (data.length === 0) {
     return <div>Loading...</div>;
@@ -22,10 +22,8 @@ function App() {
   const yearFilteredData =
     selectedYear === "ALL"
       ? data
-      : data.filter((item) =>
-          selectedYear === "YTD"
-            ? new Date(item.date).getFullYear() === new Date().getFullYear()
-            : new Date(item.date).getFullYear() === parseInt(selectedYear)
+      : data.filter(
+          (item) => new Date(item.date).getFullYear() === parseInt(selectedYear)
         );
 
   // Filter data based on the selected category
@@ -33,7 +31,7 @@ function App() {
     selectedCategory === "ALL"
       ? yearFilteredData
       : yearFilteredData.filter((item) =>
-          selectedCategory === "Doge"
+          selectedCategory === "DOGE"
             ? item.company.includes("Department")
             : !item.company.includes("Department")
         );
@@ -42,18 +40,6 @@ function App() {
   const totalLayoffs = filteredData.reduce((sum, item) => sum + item.laidOff, 0);
   const totalCompanies = filteredData.length;
   const averageLayoffsPerCompany = Math.round(totalLayoffs / totalCompanies);
-  const largestLayoff = Math.max(...filteredData.map((item) => item.laidOff));
-  const topIndustry = filteredData.reduce((acc, item) => {
-    acc[item.industry] = (acc[item.industry] || 0) + item.laidOff;
-    return acc;
-  }, {});
-  const topIndustryName = Object.keys(topIndustry).reduce((a, b) =>
-    topIndustry[a] > topIndustry[b] ? a : b
-  );
-  const retainedEmployees = filteredData.reduce(
-    (sum, item) => sum + (item.totalEmployees - item.laidOff),
-    0
-  );
   const largestLayoffEvent = filteredData.reduce(
     (max, item) => (item.laidOff > max.laidOff ? item : max),
     { company: "", laidOff: 0, date: "" }
@@ -90,48 +76,47 @@ function App() {
             path="/"
             element={
               <div className="p-4 text-center">
-                {/* Year Filter */}
+                {/* Filters */}
                 <div className="mb-6 flex space-x-8 justify-start">
                   {/* Year Filter */}
                   <div>
-                  <label htmlFor="yearFilter" className="mr-4 font-semibold">
-                    Year:
-                  </label>
-                  <select
-                    id="yearFilter"
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                    className="border border-gray-300 rounded px-4 py-2"
-                  >
-                    <option value="ALL">ALL</option>
-                    <option value="YTD">YTD</option>
-                    {Array.from(
-                    new Set(data.map((item) => new Date(item.date).getFullYear()))
-                    )
-                    .sort((a, b) => b - a)
-                    .map((year) => (
-                      <option key={year} value={year}>
-                      {year}
-                      </option>
-                    ))}
-                  </select>
+                    <label htmlFor="yearFilter" className="mr-4 font-semibold">
+                      Year:
+                    </label>
+                    <select
+                      id="yearFilter"
+                      value={selectedYear}
+                      onChange={(e) => setSelectedYear(e.target.value)}
+                      className="border border-gray-300 rounded px-4 py-2"
+                    >
+                      <option value="ALL">ALL</option>
+                      {Array.from(
+                        new Set(data.map((item) => new Date(item.date).getFullYear()))
+                      )
+                        .sort((a, b) => b - a)
+                        .map((year) => (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        ))}
+                    </select>
                   </div>
 
                   {/* Category Filter */}
                   <div>
-                  <label htmlFor="categoryFilter" className="mr-4 font-semibold">
-                    Category:
-                  </label>
-                  <select
-                    id="categoryFilter"
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="border border-gray-300 rounded px-4 py-2"
-                  >
-                    <option value="ALL">ALL</option>
-                    <option value="General">General</option>
-                    <option value="Doge">Doge</option>
-                  </select>
+                    <label htmlFor="categoryFilter" className="mr-4 font-semibold">
+                      Category:
+                    </label>
+                    <select
+                      id="categoryFilter"
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      className="border border-gray-300 rounded px-4 py-2"
+                    >
+                      <option value="ALL">ALL</option>
+                      <option value="General">General</option>
+                      <option value="DOGE">DOGE</option>
+                    </select>
                   </div>
                 </div>
 

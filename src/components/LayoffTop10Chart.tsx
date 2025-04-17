@@ -40,7 +40,7 @@ const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
   }
 
   return (
-    <div style={{ width: "100%", height: 450 }}>
+    <div style={{ width: "100%", height: 500 }}>
       <h2 className="text-center text-xl mb-4">Top Companies by Layoffs</h2>
       <ResponsiveContainer>
         <BarChart
