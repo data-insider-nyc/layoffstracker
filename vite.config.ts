@@ -8,7 +8,7 @@ import compression from 'vite-plugin-compression'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/trendboard/',
+  base: '/trendboard',
   plugins: [
     react(),
     tailwindcss(),

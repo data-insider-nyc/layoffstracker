@@ -10,27 +10,27 @@ import {
   LabelList,
 } from "recharts";
 
-type LayoffTop10ChartProps = {
+type LayoffTopLocationProps = {
   data: Array<{
     company: string;
-    headquarters?: string;
+    headquarter?: string;
     laidOff: number;
     date: Date;
   }>;
 };
 
-const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
+const LayoffTopLocation: React.FC<LayoffTopLocationProps> = ({ data }) => {
   // Aggregate data by company
   const aggregatedData = React.useMemo(() => {
-    const companyData: { [key: string]: number } = {};
+    const headquarterData: { [key: string]: number } = {};
 
-    data.forEach(({ company, laidOff }) => {
-      companyData[company] = (companyData[company] || 0) + laidOff;
+    data.forEach(({ company, headquarter }) => {
+      headquarterData[headquarter] = (headquarterData[headquarter] || 0) + 1;
     });
 
     // Convert the aggregated object into an array and sort by layoffs (descending)
-    return Object.entries(companyData)
-      .map(([company, laidOff]) => ({ company, laidOff }))
+    return Object.entries(headquarterData)
+      .map(([headquarter, laidOff]) => ({ headquarter, laidOff }))
       .sort((a, b) => b.laidOff - a.laidOff)
       .slice(0, 15); // Take the top 10 companies
   }, [data]);
@@ -41,7 +41,7 @@ const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
 
   return (
     <div style={{ width: "100%", height: 500 }}>
-      <h2 className="text-center text-xl mb-4">Top Companies by Layoffs</h2>
+      <h2 className="text-center text-xl mb-4">Top Companies by Location</h2>
       <ResponsiveContainer>
         <BarChart
           data={aggregatedData}
@@ -55,7 +55,7 @@ const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
           <YAxis type="category" tick={{ fontSize: 11 }}
             width={150}
           
-          dataKey="company" />
+          dataKey="headquarter" />
           <Tooltip />
           <Bar dataKey="laidOff" fill="#8884d8">
             <LabelList
@@ -71,4 +71,4 @@ const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
   );
 };
 
-export default LayoffTop10Chart;
+export default LayoffTopLocation;
