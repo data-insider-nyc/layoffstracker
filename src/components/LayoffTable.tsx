@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Search } from "lucide-react"; // Import the search icon
 import { companyLogos } from "../data/companyLogos";
 
@@ -6,6 +7,9 @@ interface LayoffTableProps {
 }
 
 const LayoffTable: React.FC<LayoffTableProps> = ({ data }) => {
+  const [currentPage, setCurrentPage] = useState(1); // Current page state
+  const rowsPerPage = 10; // Number of rows per page
+
   if (data.length === 0) {
     return <div>Loading...</div>; // Loading state while the data is being fetched
   }
@@ -20,76 +24,129 @@ const LayoffTable: React.FC<LayoffTableProps> = ({ data }) => {
       .replace(/^[a-z]/, (group) => group.toUpperCase());
   };
 
+  // Function to render table cell content based on the header
+  const renderCellContent = (header: string, row: Record<string, any>) => {
+    switch (header) {
+      case "company":
+        return (
+          <div className="flex items-center">
+            <img
+              src={
+                row.company.includes("Department")
+                  ? "https://logo.clearbit.com/doge.gov"
+                  : row.company === "MITRE"
+                  ? "https://logo.clearbit.com/mitre.org"
+                  : `https://logo.clearbit.com/${row.company.toLowerCase().replace(/\s+/g, "")}.com`
+              }
+              alt={`${row.company} logo`}
+              className="w-6 h-6 mr-2"
+              onError={(e) => (e.currentTarget.style.display = "none")} // Hide image if not found
+            />
+            {row.company}
+          </div>
+        );
+      case "date":
+        return new Date(row[header]).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+      case "googleSearch":
+        return (
+          <a
+            href={`https://www.google.com/search?q=${encodeURIComponent(
+              `${row.company} ${row.headquarters} layoffs`
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 flex items-center justify-center"
+          >
+            <Search className="w-5 h-5" /> {/* Search icon */}
+          </a>
+        );
+      case "laidOff":
+        return row[header]?.toLocaleString() || "N/A";
+      default:
+        return row[header];
+    }
+  };
+
+  // Pagination logic
+  const totalPages = Math.ceil(data.length / rowsPerPage);
+  const paginatedData = data.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   return (
     <div className="table-container my-4">
       <div
         className="overflow-x-auto"
-        style={{ maxHeight: "400px", overflowY: "auto" }}
       >
         <table className="table-auto w-full text-left border-collapse">
           <thead className="bg-gray-100 sticky top-0">
             <tr>
-              {headers.map((header) => (
-                <th key={header} className="border px-4 py-2 font-semibold">
-                  {header === "googleSearch"
-                    ? "Source"
-                    : header === "headquarters" // Rename "headquarters" to "City"
-                    ? "Location"
-                    : toCamelCase(header)}
+                {headers.map((header) => (
+                <th
+                key={header}
+                className={`border px-4 py-2 font-semibold ${header === "googleSearch" ? "w-12" : ""}`}
+                style={
+                  header === "googleSearch"
+                  ? { width: "50px" }
+                  : header === "date"
+                  ? { width: "160px" }
+                  : undefined
+                }
+                >
+                {header === "googleSearch"
+                ? "Link"
+                : header === "headquarter" // Rename "headquarters" to "City"
+                ? "Location"
+                : toCamelCase(header)}
                 </th>
-              ))}
+                ))}
             </tr>
           </thead>
           <tbody>
-            {data.map((row, index) => (
+            {paginatedData.map((row, index) => (
               <tr key={index} className="hover:bg-gray-50">
                 {headers.map((header) => (
                   <td key={header} className="border px-4 py-2">
-                    {header === "company" ? (
-                        <div className="flex items-center">
-                        <img
-                          src={
-                          row.company.includes("Department")
-                            ? "https://logo.clearbit.com/doge.gov"
-                            : row.company === "MITRE"
-                            ? "https://logo.clearbit.com/mitre.org"
-                            : `https://logo.clearbit.com/${row.company.toLowerCase().replace(/\s+/g, "")}.com`
-                          }
-                          alt={`${row.company} logo`}
-                          className="w-6 h-6 mr-2"
-                          onError={(e) => (e.currentTarget.style.display = "none")} // Hide image if not found
-                        />
-                        {row.company}
-                        </div>
-                    ) : header === "date" ? (
-                      // Format the date before rendering
-                      new Date(row[header]).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })
-                    ) : header === "googleSearch" ? (
-                      <a
-                        href={`https://www.google.com/search?q=${encodeURIComponent(
-                          `${row.company} ${row.headquarters} layoffs`
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 flex items-center justify-center"
-                      >
-                        <Search className="w-5 h-5" /> {/* Search icon */}
-                      </a>
-                    ) : header === "laidOff" ? (
-                      row[header].toLocaleString()
-                    ) : (
-                      row[header]
-                    )}
+                    {renderCellContent(header, row)}
                   </td>
                 ))}
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-between items-center mt-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`px-4 py-2 border rounded ${
+            currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-white text-blue-600"
+          }`}
+        >
+          Previous
+        </button>
+        <span className="text-sm">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`px-4 py-2 border rounded ${
+            currentPage === totalPages ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-white text-blue-600"
+          }`}
+        >
+          Next
+        </button>
       </div>
     </div>
   );
