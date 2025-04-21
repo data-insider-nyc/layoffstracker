@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
 type LayoffMapProps = {
   data: Array<{
@@ -30,7 +31,7 @@ const LayoffMap: React.FC<LayoffMapProps> = ({ data }) => {
   }, []);
 
   // Match cities to coordinates
-  const dataWithCoordinates = data.map((item) => {
+  const dataWithCoordinates = (data ?? []).map((item) => {
     const cityData = cityCoordinates.find(
       (c) => c.city.toLowerCase() === item.city.toLowerCase()
     );
