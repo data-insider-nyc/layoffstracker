@@ -10,9 +10,3 @@
   { "city": "Dallas", "lat": 32.7767, "lng": -96.7970 },
   { "city": "San Jose", "lat": 37.3382, "lng": -121.8863 }
 ]
-
-// Option 1: Use a Public Dataset
-// You can download a dataset of US cities with their latitude and longitude from sources like:
-
-// SimpleMaps US Cities Dataset
-// GeoNames
