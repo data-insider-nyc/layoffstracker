@@ -38,14 +38,14 @@ const LayoffMap: React.FC<LayoffMapProps> = ({ data }) => {
     return {
       ...item,
       coordinates: cityData
-        ? [cityData.lat, cityData.lng]
-        : [37.7749, -122.4194], // Default to San Francisco if no match
+      ? [cityData.lat, cityData.lng]
+      : [40.7128, -74.0060], // Default to New York City if no match
     };
   });
 
   return (
     <div className="w-full h-96 mb-8">
-      <MapContainer center={[37.7749, -122.4194]} zoom={4} className="h-full">
+      <MapContainer center={[40.7128, -74.0060]} zoom={12} className="h-full">
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
