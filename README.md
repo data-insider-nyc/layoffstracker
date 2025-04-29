@@ -78,3 +78,6 @@ Feel free to fork the repository, make changes, and open pull requests. Contribu
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
+[![GitHub stars](https://img.shields.io/github/stars/data-insider-nyc/trendboard.svg)](https://github.com/data-insider-nyc/trendboard/stargazers)
