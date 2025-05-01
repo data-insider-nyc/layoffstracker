@@ -55,9 +55,6 @@ function App() {
             <li className="hover:text-blue-600 cursor-pointer">
               <Link to="/">Home</Link>
             </li>
-            <li className="hover:text-blue-600 cursor-pointer">
-              <Link to="/about">About</Link>
-            </li>
             <li>
               <a
                 href="https://github.com/data-insider-nyc/trendboard"
@@ -65,14 +62,13 @@ function App() {
                 rel="noopener noreferrer"
                 className="text-gray-700 hover:text-blue-600 cursor-pointer"
               >
-                Contribute
+                GitHub
               </a>
             </li>
           </ul>
         </nav>
 
         <Routes>
-          <Route path="/about" element={<About />} />
           <Route
             path="/"
             element={
