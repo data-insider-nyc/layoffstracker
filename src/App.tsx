@@ -160,11 +160,11 @@ function App() {
                     </Suspense>
                   </div>
                   
-                  <div className="col-span-3 mt-8">
+                  {/* <div className="col-span-3 mt-8">
                     <Suspense fallback={<div>Loading Bar Chart...</div>}>
                       <LayoffTopLocation data={filteredData} />
                     </Suspense>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             }
