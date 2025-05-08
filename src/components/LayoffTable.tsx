@@ -53,14 +53,14 @@ const LayoffTable: React.FC<LayoffTableProps> = ({ data }) => {
         });
       case "googleSearch":
         return (
-            <a
+          <a
             href={`https://www.google.com/search?q=${encodeURIComponent(
-              `${row.company} ${row.headquarters} layoffs`
+              `${row.company} ${row.headquarters || "US"} layoffs`
             )}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 flex items-center justify-center"
-            >
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="w-5 h-5"
@@ -70,15 +70,17 @@ const LayoffTable: React.FC<LayoffTableProps> = ({ data }) => {
               strokeWidth={2}
             >
               <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M14 3h7m0 0v7m0-7L10 14m-4 7h11a2 2 0 002-2V10m-7 11H5a2 2 0 01-2-2V7a2 2 0 012-2h7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M14 3h7m0 0v7m0-7L10 14m-4 7h11a2 2 0 002-2V10m-7 11H5a2 2 0 01-2-2V7a2 2 0 012-2h7"
               />
             </svg>
-            </a>
+          </a>
         );
       case "laidOff":
         return row[header]?.toLocaleString() || "N/A";
+      case "headquarter": // Handle missing location data
+        return row[header] || "US";
       default:
         return row[header];
     }

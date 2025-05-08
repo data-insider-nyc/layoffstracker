@@ -13,7 +13,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     visualizer({
-      open: true, // Automatically open the report in the browser
+      open: false, // Automatically open the report in the browser
       filename: 'bundle-analysis.html', // Output file for the report
     }),
     compression(), // Enable gzip compression
