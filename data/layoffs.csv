@@ -1,4 +1,6 @@
 Company,headquarter,layoff,Date
+MITRE, McLean VA, 325, 5/6/2025
+MITRE,McLean VA,650,4/3/2025
 Microsoft, ,6840,5/13/2025
 Chegg,,248,5/12/2025
 Panasonic,,10000,5/9/2025
@@ -26,7 +28,6 @@ Department of Transportation (DOT),Washington D.C.,775,2/17/2025
 Department of Veterans Affairs (VA),Washington D.C.,2400,3/5/2025
 Department of Labor (DOL),Washington D.C.,170,2/14/2025
 Department of Other Agencies,Washington D.C.,5271,3/10/2025
-MITRE,McLean VA,650,4/3/2025
 Tract,"London,Non-U.S.",,4/3/2025
 Automattic,SF Bay Area,281,4/2/2025
 Canva,"Sydney,Non-U.S.",10,4/2/2025
