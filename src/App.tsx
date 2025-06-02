@@ -47,17 +47,17 @@ function App() {
   );
 
   return (
-    <Router basename="/trendboard">
+    <Router basename="/layoffstracker">
       <div className="font-sans">
         <nav className="w-full bg-white shadow-md py-4 px-6 sticky top-0 z-10 flex items-center justify-between">
-          <h2 className="text-lg font-bold tracking-wide">📊 Trendboard</h2>
+          <h2 className="text-lg font-bold tracking-wide">📊 Layoffs Tracker</h2>
           <ul className="flex space-x-6 text-sm">
             <li className="hover:text-blue-600 cursor-pointer">
               <Link to="/">Home</Link>
             </li>
             <li>
               <a
-                href="https://github.com/data-insider-nyc/trendboard"
+                href="https://github.com/data-insider-nyc/layoffstracker"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-700 hover:text-blue-600 cursor-pointer"

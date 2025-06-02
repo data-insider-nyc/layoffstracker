@@ -8,13 +8,13 @@ import compression from 'vite-plugin-compression'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/trendboard',
+  base: "/layoffstracker",
   plugins: [
     react(),
     tailwindcss(),
     visualizer({
       open: false, // Automatically open the report in the browser
-      filename: 'bundle-analysis.html', // Output file for the report
+      filename: "bundle-analysis.html", // Output file for the report
     }),
     compression(), // Enable gzip compression
   ],
@@ -23,4 +23,4 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-})
+});

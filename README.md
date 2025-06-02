@@ -1,15 +1,16 @@
-# Trendboard
+# Layoffs Tracker
 
-**Trendboard** is a web application that visualizes real-time, trendy public datasets through interactive charts and dashboards. Built using modern technologies like React, Vite, and Recharts, this app provides an insightful way to explore datasets like layoffs, stock data, and more.
+**LayoffsTracker** is a data visualization dashboard focused on tracking layoffs in the tech industry. It provides insightful, real-time charts and timelines to explore job cuts by company, date, and sector.
 
 ## Features
-- Interactive data visualizations using charts
-- Filterable datasets for easy analysis
-- Responsive layout using Tailwind CSS for a modern look
+- Interactive charts tracking tech industry layoffs
+- Filters by company, date, and industry
+- Timeline visualizations of major layoff events
+- Clean, responsive design with Tailwind CSS
 
 ## Tech Stack
 - **Frontend**: React, Vite, TypeScript, Recharts, Tailwind CSS
-- **API**: Airtable (or static CSV files)
+- **Data Source**: Static CSV files or Airtable
 - **Deployment**: GitHub Pages
 
 ## Installation
@@ -19,8 +20,8 @@ To run the project locally, follow these steps:
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/data-insider-nyc/trendboard
-    cd trendboard
+    git clone https://github.com/data-insider-nyc/layoffstracker
+    cd layoffstracker
     ```
 
 2. Install the dependencies:
@@ -80,4 +81,4 @@ Feel free to fork the repository, make changes, and open pull requests. Contribu
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 
-[![GitHub stars](https://img.shields.io/github/stars/data-insider-nyc/trendboard.svg)](https://github.com/data-insider-nyc/trendboard/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/data-insider-nyc/layoffstracker?style=social)](https://github.com/data-insider-nyc/layoffstracker/stargazers)

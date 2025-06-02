@@ -1,6 +1,6 @@
-# About Trendboard
+# About Layoffs Tracker
 
-Trendboard is a data visualization platform designed to track and analyze layoffs across various companies and industries. It provides insights into workforce trends, helping users understand the impact of layoffs over time.
+Layoffs Tracker is a data visualization platform designed to track and analyze layoffs across various companies and industries. It provides insights into workforce trends, helping users understand the impact of layoffs over time.
 
 ## Features
 - Interactive charts to visualize layoffs by company and over time.
