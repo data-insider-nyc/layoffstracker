@@ -1,12 +1,13 @@
 import React from "react";
 import {
-  AreaChart,
-  Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  LabelList,
 } from "recharts";
 
 type AggregatedData = {
@@ -53,7 +54,7 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesProps> = ({
       {data.length <= 30 ? "Daily Layoffs" : "Monthly Layoffs"}
       </h2>
       <ResponsiveContainer>
-      <AreaChart
+      <BarChart
         data={aggregatedData}
         margin={{ top: 20, right: 0, left: 0, bottom: 20 }}
       >
@@ -69,34 +70,28 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesProps> = ({
         labelStyle={{ fontSize: 11 }}
         formatter={(value: number) => [`No. of Layoffs: ${value.toLocaleString()}`]} // Format tooltip values
         />
-        <Area
-        type="monotone"
+        <Bar
         dataKey="totalLayoffs"
-        stroke="#8884d8"
         fill="#8884d8"
-        strokeWidth={2}
-        label={({ x, y, value }) => {
-          const topValues = aggregatedData
-          .map((d) => d.totalLayoffs)
-          .sort((a, b) => b - a)
-          .slice(0, 5); // Get top 3 values
-          if (topValues.includes(value)) {
-          return (
-            <text
-            x={x}
-            y={y - 10}
-            fill="#000"
-            fontSize={10}
-            textAnchor="middle"
-            >
-            {value.toLocaleString()}
-            </text>
-          );
-          }
-          return null;
-        }}
-        />
-      </AreaChart>
+        radius={[4, 4, 0, 0]}
+        >
+          <LabelList
+            dataKey="totalLayoffs"
+            position="top"
+            formatter={(value: number) => {
+              const topValues = aggregatedData
+                .map((d) => d.totalLayoffs)
+                .sort((a, b) => b - a)
+                .slice(0, 5); // Get top 5 values
+              if (topValues.includes(value)) {
+                return value.toLocaleString();
+              }
+              return "";
+            }}
+            style={{ fontSize: 10, fill: "#333" }}
+          />
+        </Bar>
+      </BarChart>
       </ResponsiveContainer>
     </div>
   );
