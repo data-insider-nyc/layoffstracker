@@ -17,9 +17,10 @@ type LayoffTop10ChartProps = {
     laidOff: number;
     date: Date;
   }>;
+  isDarkMode?: boolean;
 };
 
-const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
+const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data, isDarkMode = false }) => {
   // Aggregate data by company
   const aggregatedData = React.useMemo(() => {
     const companyData: { [key: string]: number } = {};
@@ -36,33 +37,54 @@ const LayoffTop10Chart: React.FC<LayoffTop10ChartProps> = ({ data }) => {
   }, [data]);
 
   if (aggregatedData.length === 0) {
-    return <div>Loading chart...</div>;
+    return <div className="text-gray-900 dark:text-white">Loading chart...</div>;
   }
 
   return (
     <div style={{ width: "100%", height: 500 }}>
-      <h2 className="text-center text-xl mb-4">Top Companies by Layoffs</h2>
+      <h2 className="text-center text-xl mb-4 text-gray-900 dark:text-white">Top Companies by Layoffs</h2>
       <ResponsiveContainer>
         <BarChart
           data={aggregatedData}
           layout="vertical"
           margin={{ top: 20, right: 50, left: 0, bottom: 20 }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis type="number" tick={{ fontSize: 11 }} 
+          <CartesianGrid 
+            strokeDasharray="3 3" 
+            stroke={isDarkMode ? "#4B5563" : "#E5E7EB"} 
+          />
+          <XAxis 
+            type="number" 
+            tick={{ fontSize: 11, fill: isDarkMode ? "#E5E7EB" : "#374151" }} 
+            axisLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
+            tickLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
             tickFormatter={(value) => value.toLocaleString()}
           />
-          <YAxis type="category" tick={{ fontSize: 11 }}
+          <YAxis 
+            type="category" 
+            tick={{ fontSize: 11, fill: isDarkMode ? "#E5E7EB" : "#374151" }}
+            axisLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
+            tickLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
             width={150}
-          
-          dataKey="company" />
-          <Tooltip />
-          <Bar dataKey="laidOff" fill="#8884d8">
+            dataKey="company" 
+          />
+          <Tooltip 
+            contentStyle={{ 
+              backgroundColor: isDarkMode ? "#1F2937" : "#FFFFFF",
+              border: `1px solid ${isDarkMode ? "#374151" : "#E5E7EB"}`,
+              borderRadius: "6px",
+              color: isDarkMode ? "#E5E7EB" : "#374151"
+            }}
+          />
+          <Bar dataKey="laidOff" fill={isDarkMode ? "#60A5FA" : "#8884d8"}>
             <LabelList
               dataKey="laidOff"
               position="right" // Position the label outside the bar to avoid cutting off
               formatter={(value: number) => value.toLocaleString()} // Ensure 'value' is a number
-              style={{ fontSize: 11, fill: "#333" }}
+              style={{ 
+                fontSize: 11, 
+                fill: isDarkMode ? "#E5E7EB" : "#333" 
+              }}
             />
           </Bar>
         </BarChart>

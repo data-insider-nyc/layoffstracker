@@ -55,11 +55,11 @@ a:hover {
 }
 
 body {
-  margin: 0 auto;           /* Center the body horizontally */
-  justify-content: center;  /* Horizontally center content */
-  align-items: center;      /* Vertically center content */
-  width: 100%;              /* Ensure body stretches to full width */
-  max-width: 1200px;        /* Limit the maximum width */
+  margin: 0 auto; /* Center the body horizontally */
+  justify-content: center; /* Horizontally center content */
+  align-items: center; /* Vertically center content */
+  width: 100%; /* Ensure body stretches to full width */
+  max-width: 1200px; /* Limit the maximum width */
   /* padding: 0 1rem;          Add padding on left and right */
   @apply text-[13px];
 }
@@ -183,7 +183,18 @@ button:focus-visible {
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+  }
   body {
     @apply bg-background text-foreground;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+  #root {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
   }
 }

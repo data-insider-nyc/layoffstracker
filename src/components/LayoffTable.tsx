@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-import { Search } from "lucide-react"; // Import the search icon
-import { companyLogos } from "../data/companyLogos";
 
 interface LayoffTableProps {
   data: Array<Record<string, any>>; // Define the type for the data prop
+  isDarkMode?: boolean;
 }
 
-const LayoffTable: React.FC<LayoffTableProps> = ({ data }) => {
+const LayoffTable: React.FC<LayoffTableProps> = ({ data, isDarkMode = false }) => {
   const [currentPage, setCurrentPage] = useState(1); // Current page state
   const rowsPerPage = 10; // Number of rows per page
 
   if (data.length === 0) {
-    return <div>Loading...</div>; // Loading state while the data is being fetched
+    return <div className="text-gray-900 dark:text-white">Loading...</div>; // Loading state while the data is being fetched
   }
 
   // Get the headers dynamically from the first row of CSV and add a new "Google Search" column
@@ -59,7 +58,7 @@ const LayoffTable: React.FC<LayoffTableProps> = ({ data }) => {
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 flex items-center justify-center"
+            className="text-blue-600 dark:text-blue-400 flex items-center justify-center hover:text-blue-800 dark:hover:text-blue-300"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -101,13 +100,13 @@ const LayoffTable: React.FC<LayoffTableProps> = ({ data }) => {
       <div
         className="overflow-x-auto"
       >
-        <table className="table-auto w-full text-left border-collapse">
-          <thead className="bg-gray-100 sticky top-0">
+        <table className="table-auto w-full text-left border-collapse bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
+          <thead className="bg-gray-100 dark:bg-gray-700 sticky top-0">
             <tr>
                 {headers.map((header) => (
                 <th
                 key={header}
-                className={`border px-4 py-2 font-semibold ${header === "googleSearch" ? "w-12" : ""}`}
+                className={`border border-gray-300 dark:border-gray-600 px-4 py-2 font-semibold text-gray-900 dark:text-white ${header === "googleSearch" ? "w-12" : ""}`}
                 style={
                   header === "googleSearch"
                   ? { width: "50px" }
@@ -127,9 +126,9 @@ const LayoffTable: React.FC<LayoffTableProps> = ({ data }) => {
           </thead>
           <tbody>
             {paginatedData.map((row, index) => (
-              <tr key={index} className="hover:bg-gray-50">
+              <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
                 {headers.map((header) => (
-                  <td key={header} className="border px-4 py-2">
+                  <td key={header} className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-gray-100">
                     {renderCellContent(header, row)}
                   </td>
                 ))}
@@ -144,20 +143,24 @@ const LayoffTable: React.FC<LayoffTableProps> = ({ data }) => {
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className={`px-4 py-2 border rounded ${
-            currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-white text-blue-600"
+          className={`px-4 py-2 border rounded transition-colors duration-150 ${
+            currentPage === 1 
+              ? "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed border-gray-300 dark:border-gray-600" 
+              : "bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600"
           }`}
         >
           Previous
         </button>
-        <span className="text-sm">
+        <span className="text-sm text-gray-900 dark:text-white">
           Page {currentPage} of {totalPages}
         </span>
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className={`px-4 py-2 border rounded ${
-            currentPage === totalPages ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-white text-blue-600"
+          className={`px-4 py-2 border rounded transition-colors duration-150 ${
+            currentPage === totalPages 
+              ? "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed border-gray-300 dark:border-gray-600" 
+              : "bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600"
           }`}
         >
           Next

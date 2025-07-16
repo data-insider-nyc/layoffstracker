@@ -17,10 +17,12 @@ type AggregatedData = {
 
 interface LayoffMonthlyTimeSeriesProps {
   data: Array<{ date: Date; laidOff: number }>; // Define the type for the data prop
+  isDarkMode?: boolean;
 }
 
 const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesProps> = ({
   data,
+  isDarkMode = false,
 }) => {
   // Function to group data by period (daily or monthly)
   const aggregatedData: AggregatedData[] = React.useMemo(() => {
@@ -45,12 +47,12 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesProps> = ({
   }, [data]);
 
   if (aggregatedData.length === 0) {
-    return <div>Loading chart...</div>;
+    return <div className="text-gray-900 dark:text-white">Loading chart...</div>;
   }
 
   return (
     <div style={{ width: "100%", height: 350 }}>
-      <h2 className="text-center text-xl mb-4">
+      <h2 className="text-center text-xl mb-4 text-gray-900 dark:text-white">
       {data.length <= 30 ? "Daily Layoffs" : "Monthly Layoffs"}
       </h2>
       <ResponsiveContainer>
@@ -58,21 +60,40 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesProps> = ({
         data={aggregatedData}
         margin={{ top: 20, right: 0, left: 0, bottom: 20 }}
       >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="period" tick={{ fontSize: 11 }} />
+        <CartesianGrid 
+          strokeDasharray="3 3" 
+          stroke={isDarkMode ? "#4B5563" : "#E5E7EB"} 
+        />
+        <XAxis 
+          dataKey="period" 
+          tick={{ fontSize: 11, fill: isDarkMode ? "#E5E7EB" : "#374151" }} 
+          axisLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
+          tickLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
+        />
         <YAxis
         dataKey={"totalLayoffs"}
-        tick={{ fontSize: 11 }}
+        tick={{ fontSize: 11, fill: isDarkMode ? "#E5E7EB" : "#374151" }}
+        axisLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
+        tickLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
         tickFormatter={(value) => value.toLocaleString()} // Format Y-axis labels
         />
         <Tooltip
-        contentStyle={{ fontSize: 11 }}
-        labelStyle={{ fontSize: 11 }}
+        contentStyle={{ 
+          fontSize: 11, 
+          backgroundColor: isDarkMode ? "#1F2937" : "#FFFFFF",
+          border: `1px solid ${isDarkMode ? "#374151" : "#E5E7EB"}`,
+          borderRadius: "6px",
+          color: isDarkMode ? "#E5E7EB" : "#374151"
+        }}
+        labelStyle={{ 
+          fontSize: 11, 
+          color: isDarkMode ? "#E5E7EB" : "#374151" 
+        }}
         formatter={(value: number) => [`No. of Layoffs: ${value.toLocaleString()}`]} // Format tooltip values
         />
         <Bar
         dataKey="totalLayoffs"
-        fill="#8884d8"
+        fill={isDarkMode ? "#60A5FA" : "#8884d8"}
         radius={[4, 4, 0, 0]}
         >
           <LabelList
@@ -88,7 +109,10 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesProps> = ({
               }
               return "";
             }}
-            style={{ fontSize: 10, fill: "#333" }}
+            style={{ 
+              fontSize: 10, 
+              fill: isDarkMode ? "#E5E7EB" : "#333" 
+            }}
           />
         </Bar>
       </BarChart>
