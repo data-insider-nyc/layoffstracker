@@ -35,11 +35,14 @@ const LayoffTable: React.FC<LayoffTableProps> = ({ data, isDarkMode = false }) =
                   ? "https://logo.clearbit.com/doge.gov"
                   : row.company === "MITRE"
                   ? "https://logo.clearbit.com/mitre.org"
-                  : `https://logo.clearbit.com/${row.company.toLowerCase().replace(/\s+/g, "")}.com`
+                  : `https://logo.clearbit.com/${row.company.toLowerCase().replace(/[^a-z0-9]/gi, "").replace(/\s+/g, "")}.com`
               }
               alt={`${row.company} logo`}
               className="w-6 h-6 mr-2"
-              onError={(e) => (e.currentTarget.style.display = "none")} // Hide image if not found
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
+              }} // Fallback to default image if not found
             />
             {row.company}
           </div>
