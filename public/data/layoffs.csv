@@ -1,17 +1,16 @@
 Company,headquarter,layoff,Date
-Stripe,San Francisco,"3,000",11/22/2025
-Verizon,New York City,"13,000",11/20/2025
-Synopsys,Sunnyvale,"2,000",11/25/2025
-HP Inc.,Palo Alto,"5,000*",11/30/2025
-Meta,Menlo Park,"1,500",01/12/2026
-Ericsson,Stockholm (HQ),"1,600",01/15/2026
+Verizon,New York City,13000,11/20/2025
+Synopsys,Sunnyvale,2000,11/25/2025
+HP Inc.,Palo Alto,5000,11/30/2025
+Meta,Menlo Park,1500,01/12/2026
+Ericsson,Stockholm (HQ),1600,01/15/2026
 Pinterest,San Francisco,700,01/27/2026
-ASML,Veldhoven (HQ),"1,700",01/28/2026
-Amazon.com,Seattle,"16,000",01/28/2026
-UPS,Atlanta,"30,000",01/29/2026
-Dow Inc.,Midland,"4,500",01/30/2026
+ASML,Veldhoven (HQ),1700,01/28/2026
+Amazon.com,Seattle,16000,01/28/2026
+UPS,Atlanta,30000,01/29/2026
+Dow Inc.,Midland,4500,01/30/2026
 T-Mobile,Bellevue,393,02/02/2026
-Washington Post,Washington D.C.,~750,02/05/2026
+Washington Post,Washington D.C.,750,02/05/2026
 Stripe,San Francisco,3000,11/22/2025
 Amazon.com,Seattle,14000,10/28/2025
 Meta Platforms,Menlo Park,600,10/22/2025
