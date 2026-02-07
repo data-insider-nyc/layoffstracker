@@ -202,11 +202,11 @@ function App() {
                       </Suspense>
                     </div>
                     
-                    {/* <div className="w-full mt-8">
-                      <Suspense fallback={<div>Loading Bar Chart...</div>}>
-                        <LayoffTopLocation data={filteredData} />
+                    <div className="w-full mt-8">
+                      <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Location Chart...</div>}>
+                        <LayoffTopLocation data={filteredData} isDarkMode={isDarkMode} />
                       </Suspense>
-                    </div> */}
+                    </div>
                   </div>
                 </div>
               </div>
