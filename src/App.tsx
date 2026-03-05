@@ -70,11 +70,23 @@ function App() {
     ? filteredData.reduce((max, item) => (item.laidOff > max.laidOff ? item : max))
     : { company: "", laidOff: 0, date: new Date() };
 
+  // Most recent data point date
+  const lastUpdated = data.length > 0
+    ? new Date(data[0].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : null;
+
   return (
     <Router basename="/layoffstracker">
       <div className={`font-sans min-h-screen transition-colors duration-200 ${isDarkMode ? 'dark bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
         <nav className="w-full bg-white dark:bg-gray-800 shadow-md py-4 px-6 sticky top-0 z-10 flex items-center justify-between transition-colors duration-200">
-          <h2 className="text-lg font-bold tracking-wide text-gray-900 dark:text-white">📊 Layoffs Tracker</h2>
+          <h2 className="text-lg font-bold tracking-wide text-gray-900 dark:text-white flex items-center gap-2">
+            📊 Layoffs Tracker
+            {lastUpdated && (
+              <span className="text-xs font-normal bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-0.5 rounded-full">
+                Updated {lastUpdated}
+              </span>
+            )}
+          </h2>
           <ul className="flex space-x-6 text-sm items-center">
             <li className="hover:text-blue-600 cursor-pointer">
               <Link to="/" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">Home</Link>
