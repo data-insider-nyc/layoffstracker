@@ -187,7 +187,7 @@ function App() {
                   </div>
 
                   {/* KPI Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     <KpiCard title="Total Laid Off" value={totalLayoffs} note="" />
                     <KpiCard
                       title="Total Companies with Layoffs"
@@ -208,34 +208,47 @@ function App() {
                     />
                   </div>
 
-                  <div className="w-full mx-auto">
-                    <LayoffTable data={filteredData} isDarkMode={isDarkMode} />
+                  <div className="grid grid-cols-1 gap-8 mt-8">
+                    {/* Row 1: YoY — full width, horizontally scrollable on mobile */}
+                    <div className="w-full overflow-x-auto">
+                      <div className="min-w-[600px]">
+                        <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading YoY Chart...</div>}>
+                          <LayoffYoYChart data={categoryFilteredData} isDarkMode={isDarkMode} />
+                        </Suspense>
+                      </div>
+                    </div>
+
+                    {/* Row 2: Monthly time series — full width */}
+                    <div className="w-full overflow-x-auto">
+                      <div className="min-w-[480px]">
+                        <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Time Series...</div>}>
+                          <LayoffMonthlyTimeSeries data={filteredData} isDarkMode={isDarkMode} />
+                        </Suspense>
+                      </div>
+                    </div>
+
+                    {/* Row 3: Top Companies + Top States side by side on desktop */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      <div className="overflow-x-auto">
+                        <div className="min-w-[340px]">
+                          <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Bar Chart...</div>}>
+                            <LayoffTop10Chart data={filteredData} isDarkMode={isDarkMode} />
+                          </Suspense>
+                        </div>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <div className="min-w-[340px]">
+                          <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Location Chart...</div>}>
+                            <LayoffTopLocation data={filteredData} isDarkMode={isDarkMode} />
+                          </Suspense>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-8 mt-8">
-                    <div className="w-full">
-                      <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Time Series...</div>}>
-                        <LayoffMonthlyTimeSeries data={filteredData} isDarkMode={isDarkMode} />
-                      </Suspense>
-                    </div>
-
-                    <div className="w-full mt-8">
-                      <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Bar Chart...</div>}>
-                        <LayoffTop10Chart data={filteredData} isDarkMode={isDarkMode} />
-                      </Suspense>
-                    </div>
-                    
-                    <div className="w-full mt-8">
-                      <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Location Chart...</div>}>
-                        <LayoffTopLocation data={filteredData} isDarkMode={isDarkMode} />
-                      </Suspense>
-                    </div>
-
-                    <div className="w-full mt-8">
-                      <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading YoY Chart...</div>}>
-                        <LayoffYoYChart data={categoryFilteredData} isDarkMode={isDarkMode} />
-                      </Suspense>
-                    </div>
+                  {/* Table — detail drill-down at the bottom */}
+                  <div className="w-full mx-auto mt-8">
+                    <LayoffTable data={filteredData} isDarkMode={isDarkMode} />
                   </div>
                 </div>
               </div>
