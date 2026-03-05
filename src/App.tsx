@@ -10,6 +10,7 @@ import LayoffTop10PieChart from "./components/LayoffTop10PieChart";
 const LayoffTop10Chart = React.lazy(() => import("./components/LayoffTop10Chart"));
 const LayoffMonthlyTimeSeries = React.lazy(() => import("./components/LayoffMonthlyTimeSeries"));
 const LayoffTopLocation = React.lazy(() => import("./components/LayoffTopLocation"));
+const LayoffYoYChart = React.lazy(() => import("./components/LayoffYoYChart"));
 
 function App() {
   const data = useLayoffData();
@@ -57,6 +58,16 @@ function App() {
     selectedCategory === "ALL"
       ? yearFilteredData
       : yearFilteredData.filter((item) =>
+          selectedCategory === "DOGE"
+            ? item.company.includes("Department")
+            : !item.company.includes("Department")
+        );
+
+  // Category-filtered only — used by YoY chart so all years always show
+  const categoryFilteredData =
+    selectedCategory === "ALL"
+      ? data
+      : data.filter((item) =>
           selectedCategory === "DOGE"
             ? item.company.includes("Department")
             : !item.company.includes("Department")
@@ -217,6 +228,12 @@ function App() {
                     <div className="w-full mt-8">
                       <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Location Chart...</div>}>
                         <LayoffTopLocation data={filteredData} isDarkMode={isDarkMode} />
+                      </Suspense>
+                    </div>
+
+                    <div className="w-full mt-8">
+                      <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading YoY Chart...</div>}>
+                        <LayoffYoYChart data={categoryFilteredData} isDarkMode={isDarkMode} />
                       </Suspense>
                     </div>
                   </div>
