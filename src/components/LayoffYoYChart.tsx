@@ -18,15 +18,15 @@ interface LayoffYoYChartProps {
 const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-// One distinct color per year — extend as needed
+// Sequential palette: older years muted gray → recent years vivid
 const YEAR_COLORS: Record<number, string> = {
-  2020: "#a78bfa",
-  2021: "#34d399",
-  2022: "#fb923c",
-  2023: "#facc15",
-  2024: "#60a5fa",
-  2025: "#f472b6",
-  2026: "#f87171",
+  2020: "#cbd5e1", // slate-300
+  2021: "#94a3b8", // slate-400
+  2022: "#64748b", // slate-500
+  2023: "#60a5fa", // blue-400
+  2024: "#3b82f6", // blue-500
+  2025: "#8b5cf6", // violet-500
+  2026: "#ef4444", // red-500 — most recent, most prominent
 };
 
 const LayoffYoYChart: React.FC<LayoffYoYChartProps> = ({ data, isDarkMode = false }) => {
