@@ -10,6 +10,7 @@ import LayoffTop10PieChart from "./components/LayoffTop10PieChart";
 const LayoffTop10Chart = React.lazy(() => import("./components/LayoffTop10Chart"));
 const LayoffMonthlyTimeSeries = React.lazy(() => import("./components/LayoffMonthlyTimeSeries"));
 const LayoffTopLocation = React.lazy(() => import("./components/LayoffTopLocation"));
+const LayoffYoYChart = React.lazy(() => import("./components/LayoffYoYChart"));
 
 function App() {
   const data = useLayoffData();
@@ -62,6 +63,16 @@ function App() {
             : !item.company.includes("Department")
         );
 
+  // Category-filtered only — used by YoY chart so all years always show
+  const categoryFilteredData =
+    selectedCategory === "ALL"
+      ? data
+      : data.filter((item) =>
+          selectedCategory === "DOGE"
+            ? item.company.includes("Department")
+            : !item.company.includes("Department")
+        );
+
   // Calculate KPIs
   const totalLayoffs = filteredData.reduce((sum, item) => sum + item.laidOff, 0);
   const totalCompanies = filteredData.length;
@@ -70,11 +81,23 @@ function App() {
     ? filteredData.reduce((max, item) => (item.laidOff > max.laidOff ? item : max))
     : { company: "", laidOff: 0, date: new Date() };
 
+  // Most recent data point date
+  const lastUpdated = data.length > 0
+    ? new Date(data[0].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : null;
+
   return (
     <Router basename="/layoffstracker">
       <div className={`font-sans min-h-screen transition-colors duration-200 ${isDarkMode ? 'dark bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
         <nav className="w-full bg-white dark:bg-gray-800 shadow-md py-4 px-6 sticky top-0 z-10 flex items-center justify-between transition-colors duration-200">
-          <h2 className="text-lg font-bold tracking-wide text-gray-900 dark:text-white">📊 Layoffs Tracker</h2>
+          <h2 className="text-lg font-bold tracking-wide text-gray-900 dark:text-white flex items-center gap-2">
+            📊 Layoffs Tracker
+            {lastUpdated && (
+              <span className="text-xs font-normal bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-0.5 rounded-full">
+                Updated {lastUpdated}
+              </span>
+            )}
+          </h2>
           <ul className="flex space-x-6 text-sm items-center">
             <li className="hover:text-blue-600 cursor-pointer">
               <Link to="/" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">Home</Link>
@@ -164,7 +187,7 @@ function App() {
                   </div>
 
                   {/* KPI Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     <KpiCard title="Total Laid Off" value={totalLayoffs} note="" />
                     <KpiCard
                       title="Total Companies with Layoffs"
@@ -185,28 +208,47 @@ function App() {
                     />
                   </div>
 
-                  <div className="w-full mx-auto">
-                    <LayoffTable data={filteredData} isDarkMode={isDarkMode} />
+                  <div className="grid grid-cols-1 gap-8 mt-8">
+                    {/* Row 1: YoY — full width, horizontally scrollable on mobile */}
+                    <div className="w-full overflow-x-auto">
+                      <div className="min-w-[600px]">
+                        <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading YoY Chart...</div>}>
+                          <LayoffYoYChart data={categoryFilteredData} isDarkMode={isDarkMode} />
+                        </Suspense>
+                      </div>
+                    </div>
+
+                    {/* Row 2: Monthly time series — full width */}
+                    <div className="w-full overflow-x-auto">
+                      <div className="min-w-[480px]">
+                        <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Time Series...</div>}>
+                          <LayoffMonthlyTimeSeries data={filteredData} isDarkMode={isDarkMode} />
+                        </Suspense>
+                      </div>
+                    </div>
+
+                    {/* Row 3: Top Companies + Top States side by side on desktop */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      <div className="overflow-x-auto">
+                        <div className="min-w-[340px]">
+                          <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Bar Chart...</div>}>
+                            <LayoffTop10Chart data={filteredData} isDarkMode={isDarkMode} />
+                          </Suspense>
+                        </div>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <div className="min-w-[340px]">
+                          <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Location Chart...</div>}>
+                            <LayoffTopLocation data={filteredData} isDarkMode={isDarkMode} />
+                          </Suspense>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-8 mt-8">
-                    <div className="w-full">
-                      <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Time Series...</div>}>
-                        <LayoffMonthlyTimeSeries data={filteredData} isDarkMode={isDarkMode} />
-                      </Suspense>
-                    </div>
-
-                    <div className="w-full mt-8">
-                      <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Bar Chart...</div>}>
-                        <LayoffTop10Chart data={filteredData} isDarkMode={isDarkMode} />
-                      </Suspense>
-                    </div>
-                    
-                    <div className="w-full mt-8">
-                      <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Location Chart...</div>}>
-                        <LayoffTopLocation data={filteredData} isDarkMode={isDarkMode} />
-                      </Suspense>
-                    </div>
+                  {/* Table — detail drill-down at the bottom */}
+                  <div className="w-full mx-auto mt-8">
+                    <LayoffTable data={filteredData} isDarkMode={isDarkMode} />
                   </div>
                 </div>
               </div>

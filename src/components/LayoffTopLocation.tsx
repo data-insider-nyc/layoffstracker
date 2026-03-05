@@ -177,72 +177,54 @@ const LayoffTopLocation: React.FC<LayoffTopLocationPropsWithTheme> = ({ data, is
   }
 
   return (
-    <div>
-      <div style={{ width: "100%", height: 500 }}>
-        <h2 className={`text-center text-xl mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-          Top States by Total Layoffs
-        </h2>
-        <ResponsiveContainer>
-          <BarChart
-            data={aggregatedData}
-            layout="vertical"
-            margin={{ top: 20, right: 80, left: 120, bottom: 20 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              type="number"
-              tick={{ fontSize: 11 }}
-              tickFormatter={(value) => value.toLocaleString()}
-            />
-            <YAxis
-              type="category"
-              tick={{ fontSize: 12 }}
-              width={110}
-              dataKey="state"
-            />
-            <Tooltip 
-              content={<CustomTooltip isDarkMode={isDarkMode} />}
-            />
-            <Bar dataKey="laidOff" radius={[0, 8, 8, 0]}>
-              {aggregatedData.map((item, index) => (
-                <Cell 
-                  key={`cell-${index}`} 
-                  fill={getColorByValue(item.laidOff, maxLayoffs, isDarkMode)} 
-                />
-              ))}
-              <LabelList
-                dataKey="laidOff"
-                position="right"
-                formatter={(value: number) => value.toLocaleString()}
-                style={{ fontSize: 11, fill: isDarkMode ? "#e5e7eb" : "#333" }}
+    <div style={{ width: "100%", height: 500 }}>
+      <h2 className="text-center text-xl mb-4 text-gray-900 dark:text-white">
+        Top States by Total Layoffs
+      </h2>
+      <ResponsiveContainer>
+        <BarChart
+          data={aggregatedData}
+          layout="vertical"
+          margin={{ top: 20, right: 80, left: 0, bottom: 20 }}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke={isDarkMode ? "#4B5563" : "#E5E7EB"}
+          />
+          <XAxis
+            type="number"
+            tick={{ fontSize: 11, fill: isDarkMode ? "#E5E7EB" : "#374151" }}
+            axisLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
+            tickLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
+            tickFormatter={(value) => value.toLocaleString()}
+          />
+          <YAxis
+            type="category"
+            tick={{ fontSize: 11, fill: isDarkMode ? "#E5E7EB" : "#374151" }}
+            axisLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
+            tickLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
+            width={150}
+            dataKey="state"
+          />
+          <Tooltip
+            content={<CustomTooltip isDarkMode={isDarkMode} />}
+          />
+          <Bar dataKey="laidOff" radius={[0, 6, 6, 0]}>
+            {aggregatedData.map((item, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={getColorByValue(item.laidOff, maxLayoffs, isDarkMode)}
               />
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-      
-      {/* Summary Stats */}
-      <div className={`mt-6 p-4 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
-        <h3 className={`text-sm font-semibold mb-3 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-          Summary by State
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
-          {aggregatedData.map((item) => (
-            <div 
-              key={item.state} 
-              className={`p-2 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-white border border-gray-200'}`}
-            >
-              <div className="font-semibold">{item.state}</div>
-              <div className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                {item.laidOff.toLocaleString()} people • {item.companies} companies
-              </div>
-              <div className={`text-xs font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                {item.percentage} of total
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+            ))}
+            <LabelList
+              dataKey="laidOff"
+              position="right"
+              formatter={(value: number) => value.toLocaleString()}
+              style={{ fontSize: 11, fill: isDarkMode ? "#E5E7EB" : "#333" }}
+            />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 };
