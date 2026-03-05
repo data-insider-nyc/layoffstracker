@@ -6,12 +6,20 @@ interface LayoffTableProps {
 }
 
 const LayoffTable: React.FC<LayoffTableProps> = ({ data, isDarkMode = false }) => {
-  const [currentPage, setCurrentPage] = useState(1); // Current page state
-  const rowsPerPage = 10; // Number of rows per page
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const rowsPerPage = 10;
 
   if (data.length === 0) {
-    return <div className="text-gray-900 dark:text-white">Loading...</div>; // Loading state while the data is being fetched
+    return <div className="text-gray-900 dark:text-white">Loading...</div>;
   }
+
+  const filteredData = search.trim()
+    ? data.filter((row) =>
+        row.company?.toLowerCase().includes(search.toLowerCase()) ||
+        row.headquarter?.toLowerCase().includes(search.toLowerCase())
+      )
+    : data;
 
   // Get the headers dynamically from the first row of CSV and add a new "Google Search" column
   const headers = ['date', ...Object.keys(data[0]).filter((key) => key !== 'date'), 'googleSearch'];
@@ -100,8 +108,8 @@ const LayoffTable: React.FC<LayoffTableProps> = ({ data, isDarkMode = false }) =
   };
 
   // Pagination logic
-  const totalPages = Math.ceil(data.length / rowsPerPage);
-  const paginatedData = data.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+  const paginatedData = filteredData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -109,8 +117,37 @@ const LayoffTable: React.FC<LayoffTableProps> = ({ data, isDarkMode = false }) =
     }
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setCurrentPage(1);
+  };
+
   return (
     <div className="table-container my-4">
+      {/* Search bar */}
+      <div className="relative mb-3">
+        <svg xmlns="http://www.w3.org/2000/svg" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+        </svg>
+        <input
+          type="text"
+          value={search}
+          onChange={handleSearch}
+          placeholder="Search by company or location…"
+          className="w-full pl-9 pr-9 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+        />
+        {search && (
+          <button
+            onClick={() => { setSearch(''); setCurrentPage(1); }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+          >
+            ✕
+          </button>
+        )}
+      </div>
+      {filteredData.length === 0 && search && (
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">No results for "{search}"</p>
+      )}
       <div className="overflow-x-auto">
         <table className="table-auto w-full text-left border-collapse bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
           <thead className="bg-gray-100 dark:bg-gray-700 sticky top-0">
@@ -158,7 +195,7 @@ const LayoffTable: React.FC<LayoffTableProps> = ({ data, isDarkMode = false }) =
           Previous
         </button>
         <span className="text-sm text-gray-900 dark:text-white">
-          Page {currentPage} of {totalPages}
+          {search ? `${filteredData.length} result${filteredData.length !== 1 ? 's' : ''} · ` : ''}Page {currentPage} of {totalPages || 1}
         </span>
         <button
           onClick={() => handlePageChange(currentPage + 1)}
