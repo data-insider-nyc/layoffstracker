@@ -18,15 +18,15 @@ interface LayoffYoYChartProps {
 const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-// Sequential palette: older years muted gray → recent years vivid
+// Categorical palette — each year gets a distinct, readable color
 const YEAR_COLORS: Record<number, string> = {
-  2020: "#cbd5e1", // slate-300
-  2021: "#94a3b8", // slate-400
-  2022: "#64748b", // slate-500
-  2023: "#60a5fa", // blue-400
+  2020: "#6b7280", // gray-500
+  2021: "#0891b2", // cyan-600
+  2022: "#059669", // emerald-600
+  2023: "#f59e0b", // amber-500
   2024: "#3b82f6", // blue-500
   2025: "#8b5cf6", // violet-500
-  2026: "#ef4444", // red-500 — most recent, most prominent
+  2026: "#ef4444", // red-500 — current year, most prominent
 };
 
 const LayoffYoYChart: React.FC<LayoffYoYChartProps> = ({ data, isDarkMode = false }) => {
@@ -95,7 +95,13 @@ const LayoffYoYChart: React.FC<LayoffYoYChartProps> = ({ data, isDarkMode = fals
             }}
             formatter={(value: number, name: string) => [value.toLocaleString(), name]}
           />
-          <Legend wrapperStyle={{ fontSize: 12, color: isDarkMode ? "#E5E7EB" : "#374151" }} />
+          <Legend
+            wrapperStyle={{
+              fontSize: 13,
+              paddingTop: 8,
+              color: isDarkMode ? "#E5E7EB" : "#374151",
+            }}
+          />
           {years.map((year) => (
             <Bar
               key={year}
