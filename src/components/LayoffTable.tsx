@@ -8,7 +8,7 @@ interface Props {
   isDarkMode?: boolean;
 }
 
-const ROWS = 15;
+const ROWS = 10;
 
 const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
   const [page, setPage] = useState(1);
@@ -109,11 +109,13 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
       case "date":
         return (
           <span
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 12,
-              color: isDarkMode ? "#5a5955" : "#9e9c96",
-            }}
+            style={
+              {
+                // fontFamily: "var(--font-mono)",
+                // fontSize: 12,
+                // color: isDarkMode ? "#5a5955" : "#9e9c96",
+              }
+            }
           >
             {new Date(row.date).toLocaleDateString("en-US", {
               year: "numeric",
@@ -125,12 +127,14 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
       case "laidOff":
         return (
           <span
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 13,
-              fontWeight: 600,
-              color: isDarkMode ? "#f87171" : "#E8340A",
-            }}
+            style={
+              {
+                // fontFamily: "var(--font-mono)",
+                // fontSize: 13,
+                // fontWeight: 600,
+                // color: isDarkMode ? "#f87171" : "#E8340A",
+              }
+            }
           >
             {row.laidOff?.toLocaleString() ?? "—"}
           </span>
@@ -138,7 +142,7 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
       case "headquarter":
         return (
           <span
-            style={{ fontSize: 12, color: isDarkMode ? "#9e9c96" : "#6b6860" }}
+          // style={{ fontSize: 12, color: isDarkMode ? "#9e9c96" : "#6b6860" }}
           >
             {row.headquarter || "US"}
           </span>
@@ -151,14 +155,14 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
             href={`https://www.google.com/search?q=${encodeURIComponent(`${row.company} layoffs`)}`}
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              color: isDarkMode ? "#3a3a35" : "#c8c5bc",
-              display: "flex",
-              alignItems: "center",
-              padding: 4,
-              borderRadius: 6,
-              transition: "color .15s",
-            }}
+            // style={{
+            //   color: isDarkMode ? "#3a3a35" : "#c8c5bc",
+            //   display: "flex",
+            //   alignItems: "center",
+            //   padding: 4,
+            //   borderRadius: 6,
+            //   transition: "color .15s",
+            // }}
             onMouseEnter={(e) =>
               (e.currentTarget.style.color = isDarkMode ? "#9e9c96" : "#6b6860")
             }
