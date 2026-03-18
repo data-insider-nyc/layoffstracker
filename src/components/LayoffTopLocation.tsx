@@ -1,226 +1,106 @@
 import React from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LabelList,
-  Cell,
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList, Cell } from "recharts";
 
-type LayoffTopLocationProps = {
-  data: Array<{
-    company: string;
-    headquarter?: string;
-    laidOff: number;
-    date: Date;
-  }>;
-};
-
-type LayoffTopLocationPropsWithTheme = LayoffTopLocationProps & {
+type Props = {
+  data: Array<{ company: string; headquarter?: string; laidOff: number; date: Date }>;
   isDarkMode?: boolean;
 };
 
-// Mapping of cities to regions/states (Bay Area separated for better insights)
-const cityToStateMap: { [key: string]: string } = {
-  // SF Bay Area (separated for regional insights)
-  "San Francisco": "SF Bay Area",
-  "Palo Alto": "SF Bay Area",
-  "Menlo Park": "SF Bay Area",
-  "Sunnyvale": "SF Bay Area",
-  "Mountain View": "SF Bay Area",
-  "Redwood City": "SF Bay Area",
-  "Santa Clara": "SF Bay Area",
-  "San Jose": "SF Bay Area",
-  "Oakland": "SF Bay Area",
-  "Fremont": "SF Bay Area",
-  
-  // Other California
-  "Los Angeles": "California (Other)",
-  "San Diego": "California (Other)",
-  
-  // Washington
-  "Seattle": "Washington",
-  "Bellevue": "Washington",
-  "Redmond": "Washington",
-  
-  // New York
-  "New York City": "New York",
-  "New York": "New York",
-  
-  // Other US
-  "Atlanta": "Georgia",
-  "Austin": "Texas",
-  "Dallas": "Texas",
-  "Houston": "Texas",
-  "Chicago": "Illinois",
-  "Denver": "Colorado",
-  "Boston": "Massachusetts",
-  "Cambridge": "Massachusetts",
-  "Washington D.C.": "Washington D.C.",
-  "Midland": "Michigan",
-  "Detroit": "Michigan",
-  "Portland": "Oregon",
+const cityToStateMap: Record<string, string> = {
+  "San Francisco": "SF Bay Area", "Palo Alto": "SF Bay Area", "Menlo Park": "SF Bay Area",
+  "Sunnyvale": "SF Bay Area", "Mountain View": "SF Bay Area", "Redwood City": "SF Bay Area",
+  "Santa Clara": "SF Bay Area", "San Jose": "SF Bay Area", "Oakland": "SF Bay Area",
+  "Los Angeles": "California (Other)", "San Diego": "California (Other)",
+  "Seattle": "Washington", "Bellevue": "Washington", "Redmond": "Washington",
+  "New York City": "New York", "New York": "New York",
+  "Atlanta": "Georgia", "Austin": "Texas", "Dallas": "Texas", "Houston": "Texas",
+  "Chicago": "Illinois", "Denver": "Colorado", "Boston": "Massachusetts",
+  "Cambridge": "Massachusetts", "Washington D.C.": "Washington D.C.",
+  "Detroit": "Michigan", "Portland": "Oregon",
 };
 
-// Extract state from headquarter string
-const extractState = (headquarter: string | undefined): string => {
-  if (!headquarter) return "Unknown";
-  
-  const trimmed = headquarter.trim();
-  
-  // Check if it's in our mapping
+const extractState = (hq: string | undefined): string => {
+  if (!hq) return "Unknown";
   for (const [city, state] of Object.entries(cityToStateMap)) {
-    if (trimmed.toLowerCase().includes(city.toLowerCase())) {
-      return state;
-    }
+    if (hq.toLowerCase().includes(city.toLowerCase())) return state;
   }
-  
-  // Return the original if it's not a US location
-  return trimmed;
+  return hq.trim();
 };
 
-// Get color intensity based on value
-const getColorByValue = (value: number, maxValue: number, isDarkMode?: boolean): string => {
-  const percentage = value / maxValue;
-  
+// Graduated red scale — most layoffs = darkest
+const getBarColor = (index: number, total: number, isDarkMode: boolean): string => {
+  const t = 1 - index / Math.max(total - 1, 1);
   if (isDarkMode) {
-    if (percentage > 0.8) return "#dc2626"; // Dark red
-    if (percentage > 0.6) return "#f97316"; // Orange
-    if (percentage > 0.4) return "#eab308"; // Yellow
-    if (percentage > 0.2) return "#84cc16"; // Lime
-    return "#22c55e"; // Green
+    const r = Math.round(120 + t * 135);
+    const g = Math.round(20 + t * 10);
+    const b = Math.round(20 + t * 10);
+    return `rgb(${r},${g},${b})`;
   } else {
-    if (percentage > 0.8) return "#ef4444"; // Red
-    if (percentage > 0.6) return "#f97316"; // Orange
-    if (percentage > 0.4) return "#fbbf24"; // Amber
-    if (percentage > 0.2) return "#86efac"; // Light green
-    return "#4ade80"; // Green
+    const r = Math.round(180 + t * 55);
+    const g = Math.round(40 + t * 40);
+    const b = Math.round(30 + t * 10);
+    return `rgb(${r},${g},${b})`;
   }
 };
 
-type AggregatedStateData = {
-  state: string;
-  laidOff: number;
-  companies: number;
-  percentage: string;
+const CustomTooltip = ({ active, payload, isDarkMode }: any) => {
+  if (!active || !payload?.length) return null;
+  const d = payload[0].payload;
+  return (
+    <div style={{
+      background: isDarkMode ? "#1c1c1a" : "#fff",
+      border: `1px solid ${isDarkMode ? "#2a2a26" : "#e2e0da"}`,
+      borderRadius: 10, padding: "10px 14px",
+      boxShadow: "0 8px 24px rgba(0,0,0,.12)", fontFamily: "var(--font-body)",
+    }}>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: isDarkMode ? "#9e9c96" : "#6b6860", marginBottom: 6, textTransform: "uppercase", letterSpacing: ".04em" }}>{d.state}</p>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 500, color: isDarkMode ? "#f87171" : "#E8340A" }}>{d.laidOff.toLocaleString()} laid off</p>
+      <p style={{ fontSize: 11, color: isDarkMode ? "#5a5955" : "#9e9c96", marginTop: 4 }}>{d.companies} companies · {d.percentage} share</p>
+    </div>
+  );
 };
 
-interface TooltipProps {
-  active?: boolean;
-  payload?: Array<{ payload: AggregatedStateData }>;
-  isDarkMode?: boolean;
-}
-
-const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, isDarkMode }) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload as AggregatedStateData;
-    return (
-      <div className={`p-2 rounded border ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'}`}>
-        <p className={`font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{data.state}</p>
-        <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-          Layoffs: {data.laidOff.toLocaleString()}
-        </p>
-        <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-          Companies: {data.companies}
-        </p>
-        <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
-          Share: {data.percentage}
-        </p>
-      </div>
-    );
-  }
-  return null;
-};
-
-const LayoffTopLocation: React.FC<LayoffTopLocationPropsWithTheme> = ({ data, isDarkMode }) => {
-  // Aggregate data by state with metrics
+const LayoffTopLocation: React.FC<Props> = ({ data, isDarkMode = false }) => {
   const aggregatedData = React.useMemo(() => {
-    const stateData: {
-      [key: string]: { laidOff: number; companies: Set<string> };
-    } = {};
-
+    const stateData: Record<string, { laidOff: number; companies: Set<string> }> = {};
     data.forEach(({ company, headquarter, laidOff }) => {
       const state = extractState(headquarter);
-      
-      if (!stateData[state]) {
-        stateData[state] = { laidOff: 0, companies: new Set() };
-      }
-      
+      if (!stateData[state]) stateData[state] = { laidOff: 0, companies: new Set() };
       stateData[state].laidOff += laidOff;
       stateData[state].companies.add(company);
     });
-
-    const totalLayoffs = Object.values(stateData).reduce((sum, item) => sum + item.laidOff, 0);
-
-    // Convert to array and calculate percentages
-    const result: AggregatedStateData[] = Object.entries(stateData)
-      .map(([state, item]) => ({
-        state,
-        laidOff: item.laidOff,
-        companies: item.companies.size,
-        percentage: ((item.laidOff / totalLayoffs) * 100).toFixed(1) + "%",
-      }))
+    const total = Object.values(stateData).reduce((s, d) => s + d.laidOff, 0);
+    return Object.entries(stateData)
+      .map(([state, d]) => ({ state, laidOff: d.laidOff, companies: d.companies.size, percentage: `${((d.laidOff / total) * 100).toFixed(1)}%` }))
       .sort((a, b) => b.laidOff - a.laidOff)
-      .slice(0, 15); // Top 15 states
-
-    return result;
+      .slice(0, 12);
   }, [data]);
 
-  const maxLayoffs = Math.max(...aggregatedData.map((item) => item.laidOff), 1);
+  if (aggregatedData.length === 0) return null;
 
-  if (aggregatedData.length === 0) {
-    return <div>Loading chart...</div>;
-  }
+  const axis = { fill: isDarkMode ? "#5a5955" : "#9e9c96", fontSize: 11, fontFamily: "var(--font-mono)" };
+  const grid = isDarkMode ? "#2a2a26" : "#e2e0da";
 
   return (
-    <div style={{ width: "100%", height: 500 }}>
-      <h2 className="text-center text-xl mb-4 text-gray-900 dark:text-white">
-        Top States by Total Layoffs
+    <div style={{ width: "100%", height: 440 }}>
+      <h2 style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 400, color: isDarkMode ? "#f0efe9" : "#1a1916", marginBottom: 20, paddingLeft: 4 }}>
+        Top States by Layoffs
       </h2>
-      <ResponsiveContainer>
-        <BarChart
-          data={aggregatedData}
-          layout="vertical"
-          margin={{ top: 20, right: 80, left: 0, bottom: 20 }}
-        >
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke={isDarkMode ? "#4B5563" : "#E5E7EB"}
-          />
-          <XAxis
-            type="number"
-            tick={{ fontSize: 11, fill: isDarkMode ? "#E5E7EB" : "#374151" }}
-            axisLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
-            tickLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
-            tickFormatter={(value) => value.toLocaleString()}
-          />
-          <YAxis
-            type="category"
-            tick={{ fontSize: 11, fill: isDarkMode ? "#E5E7EB" : "#374151" }}
-            axisLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
-            tickLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
-            width={150}
-            dataKey="state"
-          />
-          <Tooltip
-            content={<CustomTooltip isDarkMode={isDarkMode} />}
-          />
-          <Bar dataKey="laidOff" radius={[0, 6, 6, 0]}>
-            {aggregatedData.map((item, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={getColorByValue(item.laidOff, maxLayoffs, isDarkMode)}
-              />
+      <ResponsiveContainer width="100%" height={370}>
+        <BarChart data={aggregatedData} layout="vertical" margin={{ top: 4, right: 72, left: 0, bottom: 4 }}>
+          <CartesianGrid strokeDasharray="2 4" stroke={grid} horizontal={false} />
+          <XAxis type="number" tick={axis} axisLine={false} tickLine={false} tickFormatter={(v) => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v} />
+          <YAxis type="category" dataKey="state" tick={axis} axisLine={false} tickLine={false} width={130} />
+          <Tooltip content={<CustomTooltip isDarkMode={isDarkMode} />} cursor={{ fill: isDarkMode ? "rgba(255,255,255,.02)" : "rgba(0,0,0,.02)" }} />
+          <Bar dataKey="laidOff" radius={[0, 6, 6, 0]} maxBarSize={20}>
+            {aggregatedData.map((_, i) => (
+              <Cell key={i} fill={getBarColor(i, aggregatedData.length, isDarkMode)} />
             ))}
             <LabelList
               dataKey="laidOff"
               position="right"
-              formatter={(value: number) => value.toLocaleString()}
-              style={{ fontSize: 11, fill: isDarkMode ? "#E5E7EB" : "#333" }}
+              formatter={(v: number) => v.toLocaleString()}
+              style={{ fontSize: 10, fontFamily: "var(--font-mono)", fill: isDarkMode ? "#5a5955" : "#9e9c96" }}
             />
           </Bar>
         </BarChart>

@@ -1,50 +1,55 @@
 import React from "react";
 import {
-  ComposedChart,
-  Bar,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LabelList,
-  Legend,
+  ComposedChart, Bar, Line, XAxis, YAxis,
+  CartesianGrid, Tooltip, ResponsiveContainer, Legend, LabelList,
 } from "recharts";
 
-type AggregatedData = {
-  period: string;
-  totalLayoffs: number;
-  rollingAvg?: number;
-};
-
-interface LayoffMonthlyTimeSeriesProps {
+interface Props {
   data: Array<{ date: Date; laidOff: number }>;
   isDarkMode?: boolean;
 }
 
-const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesProps> = ({
-  data,
-  isDarkMode = false,
-}) => {
-  const aggregatedData: AggregatedData[] = React.useMemo(() => {
-    const isDaily = data.length <= 30;
-    const periodData: { [key: string]: number } = {};
+const CustomTooltip = ({ active, payload, label, isDarkMode, isDaily }: any) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{
+      background: isDarkMode ? "#1c1c1a" : "#fff",
+      border: `1px solid ${isDarkMode ? "#2a2a26" : "#e2e0da"}`,
+      borderRadius: 10, padding: "10px 14px",
+      boxShadow: "0 8px 24px rgba(0,0,0,.12)",
+      fontFamily: "var(--font-body)",
+    }}>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: isDarkMode ? "#9e9c96" : "#6b6860", marginBottom: 8, letterSpacing: ".04em" }}>{label}</p>
+      {payload.map((p: any) => (
+        <div key={p.dataKey} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, marginBottom: 3 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ width: 8, height: 8, borderRadius: 2, background: p.fill || p.stroke }} />
+            <span style={{ fontSize: 12, color: isDarkMode ? "#9e9c96" : "#6b6860" }}>
+              {p.dataKey === "rollingAvg" ? `3-${isDaily ? "day" : "month"} avg` : "Layoffs"}
+            </span>
+          </div>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 500, color: isDarkMode ? "#f0efe9" : "#1a1916" }}>
+            {Number(p.value).toLocaleString()}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
 
+const LayoffMonthlyTimeSeries: React.FC<Props> = ({ data, isDarkMode = false }) => {
+  const aggregatedData = React.useMemo(() => {
+    const isDaily = data.length <= 30;
+    const periodData: Record<string, number> = {};
     data.forEach(({ date, laidOff }) => {
       const period = isDaily
-        ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-            date.getDate()
-          ).padStart(2, "0")}`
-        : `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+        ? `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`
+        : `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}`;
       periodData[period] = (periodData[period] || 0) + laidOff;
     });
-
     const sorted = Object.entries(periodData)
       .map(([period, totalLayoffs]) => ({ period, totalLayoffs }))
       .sort((a, b) => new Date(a.period).getTime() - new Date(b.period).getTime());
-
-    // Compute 3-period rolling average
     return sorted.map((item, i) => {
       const window = sorted.slice(Math.max(0, i - 2), i + 1);
       const avg = Math.round(window.reduce((s, d) => s + d.totalLayoffs, 0) / window.length);
@@ -53,85 +58,41 @@ const LayoffMonthlyTimeSeries: React.FC<LayoffMonthlyTimeSeriesProps> = ({
   }, [data]);
 
   const isDaily = data.length <= 30;
+  if (aggregatedData.length === 0) return null;
 
-  if (aggregatedData.length === 0) {
-    return <div className="text-gray-900 dark:text-white">Loading chart...</div>;
-  }
+  const axis = { fill: isDarkMode ? "#5a5955" : "#9e9c96", fontSize: 11, fontFamily: "var(--font-mono)" };
+  const grid = isDarkMode ? "#2a2a26" : "#e2e0da";
+  const barColor = isDarkMode ? "#818cf8" : "#4f46e5";
+  const lineColor = isDarkMode ? "#f87171" : "#E8340A";
+
+  // Top 5 values to label
+  const top5 = [...aggregatedData].sort((a, b) => b.totalLayoffs - a.totalLayoffs).slice(0, 5).map(d => d.totalLayoffs);
 
   return (
     <div style={{ width: "100%", height: 350 }}>
-      <h2 className="text-center text-xl mb-4 text-gray-900 dark:text-white">
-        {isDaily ? "Daily Layoffs" : "Monthly Layoffs"}
-      </h2>
-      <ResponsiveContainer>
-        <ComposedChart
-          data={aggregatedData}
-          margin={{ top: 20, right: 0, left: 0, bottom: 20 }}
-        >
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke={isDarkMode ? "#4B5563" : "#E5E7EB"}
-          />
-          <XAxis
-            dataKey="period"
-            tick={{ fontSize: 11, fill: isDarkMode ? "#E5E7EB" : "#374151" }}
-            axisLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
-            tickLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
-          />
-          <YAxis
-            tick={{ fontSize: 11, fill: isDarkMode ? "#E5E7EB" : "#374151" }}
-            axisLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
-            tickLine={{ stroke: isDarkMode ? "#6B7280" : "#D1D5DB" }}
-            tickFormatter={(value) => value.toLocaleString()}
-          />
-          <Tooltip
-            contentStyle={{
-              fontSize: 11,
-              backgroundColor: isDarkMode ? "#1F2937" : "#FFFFFF",
-              border: `1px solid ${isDarkMode ? "#374151" : "#E5E7EB"}`,
-              borderRadius: "6px",
-              color: isDarkMode ? "#E5E7EB" : "#374151",
-            }}
-            labelStyle={{ fontSize: 11, color: isDarkMode ? "#E5E7EB" : "#374151" }}
-            formatter={(value: number, name: string) => [
-              value.toLocaleString(),
-              name === "rollingAvg" ? `3-${isDaily ? "day" : "month"} avg` : "Layoffs",
-            ]}
-          />
-          <Legend
-            formatter={(value) =>
-              value === "rollingAvg" ? `3-${isDaily ? "day" : "month"} avg` : "Layoffs"
-            }
-            wrapperStyle={{ fontSize: 12, color: isDarkMode ? "#E5E7EB" : "#374151" }}
-          />
-          <Bar
-            dataKey="totalLayoffs"
-            name="totalLayoffs"
-            fill={isDarkMode ? "#60A5FA" : "#8884d8"}
-            radius={[4, 4, 0, 0]}
-          >
+      <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 20, paddingLeft: 4 }}>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 400, color: isDarkMode ? "#f0efe9" : "#1a1916" }}>
+          {isDaily ? "Daily Layoffs" : "Monthly Layoffs"}
+        </h2>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: isDarkMode ? "#5a5955" : "#9e9c96" }}>
+          3-{isDaily ? "day" : "month"} rolling avg
+        </span>
+      </div>
+      <ResponsiveContainer width="100%" height={280}>
+        <ComposedChart data={aggregatedData} margin={{ top: 16, right: 8, left: -8, bottom: 4 }}>
+          <CartesianGrid strokeDasharray="2 4" stroke={grid} vertical={false} />
+          <XAxis dataKey="period" tick={axis} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+          <YAxis tick={axis} axisLine={false} tickLine={false} tickFormatter={(v) => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v} />
+          <Tooltip content={<CustomTooltip isDarkMode={isDarkMode} isDaily={isDaily} />} cursor={{ fill: isDarkMode ? "rgba(255,255,255,.03)" : "rgba(0,0,0,.03)" }} />
+          <Bar dataKey="totalLayoffs" fill={barColor} radius={[3, 3, 0, 0]} maxBarSize={28}>
             <LabelList
               dataKey="totalLayoffs"
               position="top"
-              formatter={(value: number) => {
-                const topValues = aggregatedData
-                  .map((d) => d.totalLayoffs)
-                  .sort((a, b) => b - a)
-                  .slice(0, 5);
-                return topValues.includes(value) ? value.toLocaleString() : "";
-              }}
-              style={{ fontSize: 10, fill: isDarkMode ? "#E5E7EB" : "#333" }}
+              formatter={(v: number) => top5.includes(v) ? v.toLocaleString() : ""}
+              style={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: isDarkMode ? "#5a5955" : "#9e9c96" }}
             />
           </Bar>
-          <Line
-            type="monotone"
-            dataKey="rollingAvg"
-            name="rollingAvg"
-            stroke={isDarkMode ? "#F87171" : "#ef4444"}
-            strokeWidth={2}
-            dot={false}
-            strokeDasharray="5 3"
-          />
+          <Line type="monotone" dataKey="rollingAvg" stroke={lineColor} strokeWidth={2} dot={false} strokeDasharray="4 2" />
         </ComposedChart>
       </ResponsiveContainer>
     </div>

@@ -1,257 +1,646 @@
-import React, { useState, Suspense, useEffect } from "react";
+import React, { useState, Suspense, useEffect, useMemo } from "react";
 import LayoffTable from "./components/LayoffTable";
 import { useLayoffData } from "./hooks/useLayoffData";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import { Moon, Sun } from "lucide-react";
-import About from "./components/About";
+import { Moon, Sun, TrendingDown, GitBranch } from "lucide-react";
 import KpiCard from "./components/KpiCard";
-import LayoffTop10PieChart from "./components/LayoffTop10PieChart";
+import CompanyPage from "./components/CompanyPage";
+import SEOHead from "./components/SEOHead";
+import ErrorBoundary from "./components/ErrorBoundary";
 
-const LayoffTop10Chart = React.lazy(() => import("./components/LayoffTop10Chart"));
-const LayoffMonthlyTimeSeries = React.lazy(() => import("./components/LayoffMonthlyTimeSeries"));
-const LayoffTopLocation = React.lazy(() => import("./components/LayoffTopLocation"));
+const LayoffTop10Chart = React.lazy(
+  () => import("./components/LayoffTop10Chart"),
+);
+const LayoffMonthlyTimeSeries = React.lazy(
+  () => import("./components/LayoffMonthlyTimeSeries"),
+);
+const LayoffTopLocation = React.lazy(
+  () => import("./components/LayoffTopLocation"),
+);
 const LayoffYoYChart = React.lazy(() => import("./components/LayoffYoYChart"));
 
-function App() {
+function ChartSkeleton({ height = 340 }: { height?: number }) {
+  return (
+    <div
+      style={{
+        height,
+        display: "flex",
+        flexDirection: "column",
+        gap: 12,
+        padding: 24,
+      }}
+    >
+      <div
+        className="skeleton"
+        style={{ height: 20, width: "40%", borderRadius: 6 }}
+      />
+      <div style={{ flex: 1, display: "flex", alignItems: "flex-end", gap: 6 }}>
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div
+            key={i}
+            className="skeleton"
+            style={{
+              flex: 1,
+              height: `${30 + Math.sin(i) * 20 + i * 3}%`,
+              borderRadius: "4px 4px 0 0",
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
   const data = useLayoffData();
   const [selectedYear, setSelectedYear] = useState("ALL");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
-  
-  // Initialize dark mode from localStorage or system preference
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedMode = localStorage.getItem('darkMode');
-    if (savedMode !== null) {
-      return JSON.parse(savedMode);
-    }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const saved = localStorage.getItem("darkMode");
+    return saved !== null
+      ? JSON.parse(saved)
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
-  // Apply dark mode class on mount and when it changes
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+    document.documentElement.classList.toggle("dark", isDarkMode);
+    localStorage.setItem("darkMode", JSON.stringify(isDarkMode));
   }, [isDarkMode]);
 
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  const yearFilteredData = useMemo(
+    () =>
+      selectedYear === "ALL"
+        ? data
+        : data.filter(
+            (d) => new Date(d.date).getFullYear() === parseInt(selectedYear),
+          ),
+    [data, selectedYear],
+  );
+  const filteredData = useMemo(
+    () =>
+      selectedCategory === "ALL"
+        ? yearFilteredData
+        : yearFilteredData.filter((d) =>
+            selectedCategory === "DOGE"
+              ? d.company.includes("Department")
+              : !d.company.includes("Department"),
+          ),
+    [yearFilteredData, selectedCategory],
+  );
+  const categoryFilteredData = useMemo(
+    () =>
+      selectedCategory === "ALL"
+        ? data
+        : data.filter((d) =>
+            selectedCategory === "DOGE"
+              ? d.company.includes("Department")
+              : !d.company.includes("Department"),
+          ),
+    [data, selectedCategory],
+  );
+  const { totalLayoffs, totalCompanies, avgLayoffs, largestEvent } =
+    useMemo(() => {
+      const totalLayoffs = filteredData.reduce((s, d) => s + d.laidOff, 0);
+      const totalCompanies = filteredData.length;
+      const avgLayoffs = totalCompanies
+        ? Math.round(totalLayoffs / totalCompanies)
+        : 0;
+      const largestEvent = filteredData.length
+        ? filteredData.reduce((m, d) => (d.laidOff > m.laidOff ? d : m))
+        : { company: "—", laidOff: 0, date: new Date() };
+      return { totalLayoffs, totalCompanies, avgLayoffs, largestEvent };
+    }, [filteredData]);
+  const availableYears = useMemo(
+    () =>
+      Array.from(new Set(data.map((d) => new Date(d.date).getFullYear()))).sort(
+        (a, b) => b - a,
+      ),
+    [data],
+  );
+  const lastUpdated = useMemo(
+    () =>
+      data.length
+        ? new Date(data[0].date).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })
+        : null,
+    [data],
+  );
 
   if (data.length === 0) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "var(--bg)",
+          gap: 16,
+        }}
+      >
+        <TrendingDown
+          size={32}
+          style={{ color: "var(--accent)", opacity: 0.7 }}
+        />
+        <p
+          style={{
+            color: "var(--text-muted)",
+            fontSize: 13,
+            fontFamily: "var(--font-body)",
+          }}
+        >
+          Loading layoff data…
+        </p>
+      </div>
+    );
   }
 
-  // Filter data based on the selected year
-  const yearFilteredData =
-    selectedYear === "ALL"
-      ? data
-      : data.filter(
-          (item) => new Date(item.date).getFullYear() === parseInt(selectedYear)
-        );
-
-  // Filter data based on the selected category
-  const filteredData =
-    selectedCategory === "ALL"
-      ? yearFilteredData
-      : yearFilteredData.filter((item) =>
-          selectedCategory === "DOGE"
-            ? item.company.includes("Department")
-            : !item.company.includes("Department")
-        );
-
-  // Category-filtered only — used by YoY chart so all years always show
-  const categoryFilteredData =
-    selectedCategory === "ALL"
-      ? data
-      : data.filter((item) =>
-          selectedCategory === "DOGE"
-            ? item.company.includes("Department")
-            : !item.company.includes("Department")
-        );
-
-  // Calculate KPIs
-  const totalLayoffs = filteredData.reduce((sum, item) => sum + item.laidOff, 0);
-  const totalCompanies = filteredData.length;
-  const averageLayoffsPerCompany = Math.round(totalLayoffs / totalCompanies);
-  const largestLayoffEvent = filteredData.length > 0 
-    ? filteredData.reduce((max, item) => (item.laidOff > max.laidOff ? item : max))
-    : { company: "", laidOff: 0, date: new Date() };
-
-  // Most recent data point date
-  const lastUpdated = data.length > 0
-    ? new Date(data[0].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-    : null;
+  const chartCard = {
+    background: "var(--bg-card)",
+    border: "1px solid var(--border)",
+    borderRadius: "var(--radius-lg)",
+    padding: "20px 16px",
+    boxShadow: "var(--shadow-sm)",
+  };
 
   return (
     <Router basename="/layoffstracker">
-      <div className={`font-sans min-h-screen transition-colors duration-200 ${isDarkMode ? 'dark bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
-        <nav className="w-full bg-white dark:bg-gray-800 shadow-md py-4 px-6 sticky top-0 z-10 flex items-center justify-between transition-colors duration-200">
-          <h2 className="text-lg font-bold tracking-wide text-gray-900 dark:text-white flex items-center gap-2">
-            📊 Layoffs Tracker
+      <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
+        {/* Nav */}
+        <nav
+          className="nav-glass"
+          style={{
+            position: "sticky",
+            top: 0,
+            zIndex: 50,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "0 24px",
+            height: 56,
+          }}
+        >
+          <Link
+            to="/"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              textDecoration: "none",
+            }}
+          >
+            <div
+              style={{
+                width: 30,
+                height: 30,
+                borderRadius: 8,
+                background: "var(--accent)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <TrendingDown size={16} color="#fff" />
+            </div>
+            <span
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 18,
+                color: "var(--text-primary)",
+                letterSpacing: "-.01em",
+              }}
+            >
+              Layoffs Tracker
+            </span>
             {lastUpdated && (
-              <span className="text-xs font-normal bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-0.5 rounded-full">
-                Updated {lastUpdated}
+              <span
+                className="badge badge-green"
+                style={{ display: "flex", alignItems: "center", gap: 5 }}
+              >
+                <span className="live-dot" />
+                {lastUpdated}
               </span>
             )}
-          </h2>
-          <ul className="flex space-x-6 text-sm items-center">
-            <li className="hover:text-blue-600 cursor-pointer">
-              <Link to="/" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">Home</Link>
-            </li>
-            <li>
-              <a
-                href="https://github.com/data-insider-nyc/layoffstracker"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer"
-              >
-                GitHub
-              </a>
-            </li>
-            <li>
-              <button
-                onClick={toggleDarkMode}
-                className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
-                aria-label="Toggle dark mode"
-              >
-                {isDarkMode ? (
-                  <Sun className="h-4 w-4 text-yellow-500" />
-                ) : (
-                  <Moon className="h-4 w-4 text-gray-600 dark:text-gray-300" />
-                )}
-              </button>
-            </li>
-          </ul>
+          </Link>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <a
+              href="https://github.com/data-insider-nyc/layoffstracker"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "6px 12px",
+                borderRadius: 8,
+                border: "1.5px solid var(--border)",
+                background: "var(--bg-card)",
+                color: "var(--text-secondary)",
+                fontSize: 12,
+                fontWeight: 600,
+                textDecoration: "none",
+                fontFamily: "var(--font-body)",
+              }}
+            >
+              <GitBranch size={13} /> GitHub
+            </a>
+            {/* <button onClick={() => setIsDarkMode((v: boolean) => !v)}
+              style={{ width: 36, height: 36, borderRadius: 8, border: "1.5px solid var(--border)", background: "var(--bg-card)", color: "var(--text-secondary)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+              aria-label="Toggle dark mode">
+              {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
+            </button> */}
+          </div>
         </nav>
 
         <Routes>
           <Route
+            path="/company/:slug"
+            element={<CompanyPage data={data} isDarkMode={isDarkMode} />}
+          />
+          <Route
             path="/"
             element={
-              <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-200 min-h-screen">
-                <div className="max-w-7xl mx-auto px-4 py-4">
-                  {/* Filters */}
-                  <div className="mb-6 flex flex-col sm:flex-row sm:space-x-8 space-y-4 sm:space-y-0 justify-start">
-                    {/* Year Filter */}
-                    <div>
-                      <label htmlFor="yearFilter" className="mr-4 font-semibold text-gray-900 dark:text-white">
-                        Year:
-                      </label>
-                      <select
-                        id="yearFilter"
-                        value={selectedYear}
-                        onChange={(e) => setSelectedYear(e.target.value)}
-                        className="border border-gray-300 dark:border-gray-600 rounded px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                      >
-                        <option value="ALL">ALL</option>
-                        {Array.from(
-                          new Set(data.map((item) => new Date(item.date).getFullYear()))
-                        )
-                          .sort((a, b) => b - a)
-                          .map((year) => (
-                            <option key={year} value={year}>
-                              {year}
-                            </option>
-                          ))}
-                      </select>
-                    </div>
-
-                    {/* Category Filter */}
-                    <div>
-                      <label htmlFor="categoryFilter" className="mr-4 font-semibold text-gray-900 dark:text-white">
-                        Category:
-                      </label>
-                      <select
-                        id="categoryFilter"
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="border border-gray-300 dark:border-gray-600 rounded px-4 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                      >
-                        <option value="ALL">ALL</option>
-                        <option value="General">General</option>
-                        <option value="DOGE">DOGE</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Title for KPI Section */}
-                  <div className="text-center mb-6">
-                    <h2 className="text-2xl mb-2 text-gray-900 dark:text-white">US Layoff Data Overview (2020 - Present)</h2>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      Data from 2020 to the present showing the number of layoffs across various companies.
+              <>
+                <SEOHead
+                  title="Layoffs Tracker — US Tech & Corporate Layoffs 2020–Present"
+                  description={`Track ${totalLayoffs.toLocaleString()} layoffs across ${totalCompanies} companies. Interactive charts, filters, and company timelines.`}
+                />
+                <div
+                  style={{
+                    maxWidth: 1280,
+                    margin: "0 auto",
+                    padding: "32px 24px 64px",
+                  }}
+                >
+                  {/* Hero */}
+                  <header
+                    className="animate-fade-up"
+                    style={{ marginBottom: 36 }}
+                  >
+                    <p
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: 11,
+                        letterSpacing: ".12em",
+                        textTransform: "uppercase",
+                        color: "var(--accent)",
+                        marginBottom: 10,
+                        fontWeight: 500,
+                      }}
+                    >
+                      Data Dashboard
                     </p>
+                    <h1
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontSize: "clamp(2rem, 5vw, 3.4rem)",
+                        fontWeight: 400,
+                        color: "var(--text-primary)",
+                        lineHeight: 1.1,
+                        marginBottom: 12,
+                        letterSpacing: "-.02em",
+                      }}
+                    >
+                      US Layoffs,{" "}
+                      <em
+                        style={{
+                          fontStyle: "italic",
+                          color: "var(--text-secondary)",
+                        }}
+                      >
+                        2020 – Present
+                      </em>
+                    </h1>
+                    <p
+                      style={{
+                        fontSize: 14,
+                        color: "var(--text-secondary)",
+                        maxWidth: 520,
+                        lineHeight: 1.7,
+                      }}
+                    >
+                      Tracking of workforce reductions across tech companies and
+                      federal agencies.
+                    </p>
+                  </header>
+
+                  {/* Filters */}
+                  <div
+                    className="animate-fade-up delay-1"
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 10,
+                      marginBottom: 32,
+                      alignItems: "center",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: 11,
+                        fontFamily: "var(--font-mono)",
+                        color: "var(--text-muted)",
+                        letterSpacing: ".06em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Filter by
+                    </span>
+                    <select
+                      className="filter-select"
+                      value={selectedYear}
+                      onChange={(e) => setSelectedYear(e.target.value)}
+                    >
+                      <option value="ALL">All Years</option>
+                      {availableYears.map((y) => (
+                        <option key={y} value={y}>
+                          {y}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      className="filter-select"
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                    >
+                      <option value="ALL">All Categories</option>
+                      <option value="General">Tech / Corporate</option>
+                      <option value="DOGE">Federal (DOGE)</option>
+                    </select>
+                    {(selectedYear !== "ALL" || selectedCategory !== "ALL") && (
+                      <button
+                        onClick={() => {
+                          setSelectedYear("ALL");
+                          setSelectedCategory("ALL");
+                        }}
+                        style={{
+                          padding: "7px 14px",
+                          borderRadius: 8,
+                          border: "1.5px solid var(--border)",
+                          background: "transparent",
+                          color: "var(--text-secondary)",
+                          fontSize: 12,
+                          cursor: "pointer",
+                          fontFamily: "var(--font-body)",
+                        }}
+                      >
+                        Clear ✕
+                      </button>
+                    )}
                   </div>
 
-                  {/* KPI Cards */}
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    <KpiCard title="Total Laid Off" value={totalLayoffs} note="" />
-                    <KpiCard
-                      title="Total Companies with Layoffs"
-                      value={totalCompanies}
-                      note=""
-                    />
-                    <KpiCard
-                      title="Average Layoffs per Company"
-                      value={averageLayoffsPerCompany}
-                      note=""
-                    />
-                    <KpiCard
-                      title="Largest Layoff Event"
-                      value={largestLayoffEvent.laidOff}
-                      note={`${largestLayoffEvent.company} on ${new Date(
-                        largestLayoffEvent.date
-                      ).toLocaleDateString()}`}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-8 mt-8">
-                    {/* Row 1: YoY — full width, horizontally scrollable on mobile */}
-                    <div className="w-full overflow-x-auto">
-                      <div className="min-w-[600px]">
-                        <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading YoY Chart...</div>}>
-                          <LayoffYoYChart data={categoryFilteredData} isDarkMode={isDarkMode} />
-                        </Suspense>
-                      </div>
+                  {filteredData.length === 0 ? (
+                    <div style={{ textAlign: "center", padding: "80px 24px" }}>
+                      <p style={{ fontSize: 48, marginBottom: 12 }}>🔍</p>
+                      <p
+                        style={{
+                          fontFamily: "var(--font-display)",
+                          fontSize: 22,
+                          color: "var(--text-primary)",
+                          marginBottom: 8,
+                        }}
+                      >
+                        No layoffs found
+                      </p>
+                      <p
+                        style={{
+                          fontSize: 13,
+                          color: "var(--text-muted)",
+                          marginBottom: 20,
+                        }}
+                      >
+                        Try adjusting your filters.
+                      </p>
+                      <button
+                        onClick={() => {
+                          setSelectedYear("ALL");
+                          setSelectedCategory("ALL");
+                        }}
+                        style={{
+                          padding: "10px 20px",
+                          borderRadius: 8,
+                          border: "none",
+                          background: "var(--accent)",
+                          color: "#fff",
+                          fontSize: 13,
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          fontFamily: "var(--font-body)",
+                        }}
+                      >
+                        Reset filters
+                      </button>
                     </div>
-
-                    {/* Row 2: Monthly time series — full width */}
-                    <div className="w-full overflow-x-auto">
-                      <div className="min-w-[480px]">
-                        <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Time Series...</div>}>
-                          <LayoffMonthlyTimeSeries data={filteredData} isDarkMode={isDarkMode} />
-                        </Suspense>
+                  ) : (
+                    <>
+                      {/* KPIs */}
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateColumns:
+                            "repeat(auto-fit, minmax(190px, 1fr))",
+                          gap: 16,
+                          marginBottom: 36,
+                        }}
+                      >
+                        <KpiCard
+                          title="Total Laid Off"
+                          value={totalLayoffs}
+                          accent="red"
+                          delay={0}
+                        />
+                        <KpiCard
+                          title="Companies Affected"
+                          value={totalCompanies}
+                          accent="blue"
+                          delay={80}
+                        />
+                        <KpiCard
+                          title="Avg per Company"
+                          value={avgLayoffs}
+                          accent="default"
+                          delay={160}
+                        />
+                        <KpiCard
+                          title="Largest Single Event"
+                          value={largestEvent.laidOff}
+                          note={`${largestEvent.company} · ${new Date(largestEvent.date).toLocaleDateString("en-US", { month: "short", year: "numeric" })}`}
+                          accent="red"
+                          delay={240}
+                        />
                       </div>
-                    </div>
 
-                    {/* Row 3: Top Companies + Top States side by side on desktop */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                      <div className="overflow-x-auto">
-                        <div className="min-w-[340px]">
-                          <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Bar Chart...</div>}>
-                            <LayoffTop10Chart data={filteredData} isDarkMode={isDarkMode} />
-                          </Suspense>
+                      {/* Charts */}
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 20,
+                        }}
+                      >
+                        <div
+                          className="animate-fade-up delay-3"
+                          style={{ overflowX: "auto" }}
+                        >
+                          <div style={{ ...chartCard, minWidth: 580 }}>
+                            <ErrorBoundary>
+                              <Suspense
+                                fallback={<ChartSkeleton height={380} />}
+                              >
+                                <LayoffYoYChart
+                                  data={categoryFilteredData}
+                                  isDarkMode={isDarkMode}
+                                />
+                              </Suspense>
+                            </ErrorBoundary>
+                          </div>
+                        </div>
+                        <div
+                          className="animate-fade-up delay-4"
+                          style={{ overflowX: "auto" }}
+                        >
+                          <div style={{ ...chartCard, minWidth: 480 }}>
+                            <ErrorBoundary>
+                              <Suspense
+                                fallback={<ChartSkeleton height={350} />}
+                              >
+                                <LayoffMonthlyTimeSeries
+                                  data={filteredData}
+                                  isDarkMode={isDarkMode}
+                                />
+                              </Suspense>
+                            </ErrorBoundary>
+                          </div>
+                        </div>
+                        <div
+                          className="animate-fade-up delay-5"
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns:
+                              "repeat(auto-fit, minmax(340px, 1fr))",
+                            gap: 20,
+                          }}
+                        >
+                          <div style={{ overflowX: "auto" }}>
+                            <div style={{ ...chartCard, minWidth: 340 }}>
+                              <ErrorBoundary>
+                                <Suspense
+                                  fallback={<ChartSkeleton height={440} />}
+                                >
+                                  <LayoffTop10Chart
+                                    data={filteredData}
+                                    isDarkMode={isDarkMode}
+                                  />
+                                </Suspense>
+                              </ErrorBoundary>
+                            </div>
+                          </div>
+                          <div style={{ overflowX: "auto" }}>
+                            <div style={{ ...chartCard, minWidth: 340 }}>
+                              <ErrorBoundary>
+                                <Suspense
+                                  fallback={<ChartSkeleton height={440} />}
+                                >
+                                  <LayoffTopLocation
+                                    data={filteredData}
+                                    isDarkMode={isDarkMode}
+                                  />
+                                </Suspense>
+                              </ErrorBoundary>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Table card */}
+                        <div
+                          className="animate-fade-up"
+                          style={{
+                            ...chartCard,
+                            padding: 0,
+                            overflow: "hidden",
+                          }}
+                        >
+                          <div
+                            style={{
+                              padding: "16px 20px 12px",
+                              borderBottom: "1px solid var(--border)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <h2
+                              style={{
+                                fontFamily: "var(--font-display)",
+                                fontSize: 18,
+                                color: "var(--text-primary)",
+                                fontWeight: 400,
+                              }}
+                            >
+                              All Layoff Events
+                            </h2>
+                            <span
+                              className="badge badge-blue"
+                              style={{ fontFamily: "var(--font-mono)" }}
+                            >
+                              {filteredData.length.toLocaleString()} rows
+                            </span>
+                          </div>
+                          <ErrorBoundary>
+                            <LayoffTable
+                              data={filteredData}
+                              isDarkMode={isDarkMode}
+                            />
+                          </ErrorBoundary>
                         </div>
                       </div>
-                      <div className="overflow-x-auto">
-                        <div className="min-w-[340px]">
-                          <Suspense fallback={<div className="text-gray-900 dark:text-white">Loading Location Chart...</div>}>
-                            <LayoffTopLocation data={filteredData} isDarkMode={isDarkMode} />
-                          </Suspense>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                    </>
+                  )}
 
-                  {/* Table — detail drill-down at the bottom */}
-                  <div className="w-full mx-auto mt-8">
-                    <LayoffTable data={filteredData} isDarkMode={isDarkMode} />
-                  </div>
+                  {/* Footer */}
+                  <footer
+                    style={{
+                      marginTop: 64,
+                      paddingTop: 24,
+                      borderTop: "1px solid var(--border)",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 12,
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <p
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: 11,
+                        color: "var(--text-muted)",
+                        letterSpacing: ".04em",
+                      }}
+                    >
+                      Data sourced from public reports. Updated continuously.
+                    </p>
+                    <a
+                      href="https://github.com/data-insider-nyc/layoffstracker"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: 11,
+                        color: "var(--text-muted)",
+                        textDecoration: "none",
+                        letterSpacing: ".04em",
+                      }}
+                    >
+                      Open source on GitHub →
+                    </a>
+                  </footer>
                 </div>
-              </div>
+              </>
             }
           />
         </Routes>
@@ -259,5 +648,3 @@ function App() {
     </Router>
   );
 }
-
-export default App;

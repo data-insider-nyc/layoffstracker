@@ -1,239 +1,302 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from "react";
+import { Link } from "react-router-dom";
+import { Share2, ExternalLink } from "lucide-react";
+import { getLogoUrl, getFallbackLogoUrl } from "../lib/logoUtils";
 
-interface LayoffTableProps {
-  data: Array<Record<string, any>>; // Define the type for the data prop
+interface Props {
+  data: Array<Record<string, any>>;
   isDarkMode?: boolean;
 }
 
-const LayoffTable: React.FC<LayoffTableProps> = ({ data, isDarkMode = false }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState('');
-  const rowsPerPage = 10;
+const ROWS = 15;
 
-  if (data.length === 0) {
-    return <div className="text-gray-900 dark:text-white">Loading...</div>;
-  }
+const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
-  const filteredData = search.trim()
-    ? data.filter((row) =>
-        row.company?.toLowerCase().includes(search.toLowerCase()) ||
-        row.headquarter?.toLowerCase().includes(search.toLowerCase())
+  const filtered = search.trim()
+    ? data.filter(
+        (r) =>
+          r.company?.toLowerCase().includes(search.toLowerCase()) ||
+          r.headquarter?.toLowerCase().includes(search.toLowerCase()),
       )
     : data;
 
-  // Get the headers dynamically from the first row of CSV and add a new "Google Search" column
-  const headers = ['date', ...Object.keys(data[0]).filter((key) => key !== 'date'), 'googleSearch'];
-
-  // Utility function to convert strings to camel case
-  const toCamelCase = (str: string) => {
-    return str.replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', '')).replace(/^[a-z]/, (group) => group.toUpperCase());
-  };
-
-  // Function to render table cell content based on the header
-  const renderCellContent = (header: string, row: Record<string, any>) => {
-    switch (header) {
-      case 'company':
-        const getLogoUrl = (company: string, headquarter: string) => {
-          if (company.includes('Department')) {
-            return 'https://unavatar.io/whitehouse.gov';
-          }
-
-          // Map company names to their domains
-          const domainMap: Record<string, string> = {
-            // Explicitly mapped to correct domains
-            MITRE: 'mitre.org',
-            Amazon: 'amazon.com',
-            'Amazon.com': 'amazon.com',
-            Meta: 'meta.com',
-            'Meta Platforms': 'meta.com',
-            xAI: 'x.ai',
-            Rivian: 'rivian.com',
-            Salesforce: 'salesforce.com',
-            Oracle: 'oracle.com',
-            Atlassian: 'atlassian.com',
-            ScaleAI: 'scale.com',
-            Intel: 'intel.com',
-            Indeed: 'indeed.com',
-            Microsoft: 'microsoft.com',
-            Google: 'google.com',
-            eBay: 'ebay.com',
-            Stripe: 'stripe.com',
-            Perplexity: 'perplexity.ai',
-            UBS: 'ubs.com',
-            TikTok: 'tiktok.com',
-            OpenAI: 'openai.com',
-            Apple: 'apple.com',
-            Netflix: 'netflix.com',
-            Spotify: 'spotify.com',
-            Airbnb: 'airbnb.com',
-            Uber: 'uber.com',
-            Lyft: 'lyft.com',
-            Twitter: 'twitter.com',
-            'X (Twitter)': 'x.com',
-            Snap: 'snap.com',
-            LinkedIn: 'linkedin.com',
-            Cisco: 'cisco.com',
-            HP: 'hp.com',
-            'HP Inc.': 'hp.com',
-            Dell: 'dell.com',
-            IBM: 'ibm.com',
-            Zoom: 'zoom.us',
-            PayPal: 'paypal.com',
-            Paypal: 'paypal.com',
-            Coinbase: 'coinbase.com',
-            Robinhood: 'robinhood.com',
-            DoorDash: 'doordash.com',
-            Shopify: 'shopify.com',
-            Expedia: 'expedia.com',
-            Tesla: 'tesla.com',
-            Peloton: 'onepeloton.com',
-            Wayfair: 'wayfair.com',
-            Block: 'block.xyz',
-            Nike: 'nike.com',
-            Verizon: 'verizon.com',
-            'Washington Post': 'washingtonpost.com',
-            UPS: 'ups.com',
-            Pinterest: 'pinterest.com',
-            Macy: 'macys.com',
-            "Macy's": 'macys.com',
-            'Home Depot': 'homedepot.com',
-            Angi: 'angi.com',
-            'T-Mobile': 'tmobile.com',
-            Synopsys: 'synopsys.com',
-            ASML: 'asml.com',
-            Ericsson: 'ericsson.com',
-            Microsoft: 'microsoft.com',
-            Dow: 'dow.com',
-            'Dow Inc.': 'dow.com',
-            Lowe: 'lowes.com',
-            "Lowe's": 'lowes.com',
-            Dropbox: 'dropbox.com',
-            Twilio: 'twilio.com',
-            Zendesk: 'zendesk.com',
-            Okta: 'okta.com',
-            Databricks: 'databricks.com',
-            Instacart: 'instacart.com',
-            Klarna: 'klarna.com',
-            Grab: 'grab.com',
-            Canva: 'canva.com',
-            Notion: 'notion.so',
-            Figma: 'figma.com',
-            Asana: 'asana.com',
-            HubSpot: 'hubspot.com',
-          };
-
-          const domain = domainMap[company] || `${company.toLowerCase().replace(/[^a-z0-9]/gi, '')}.com`;
-          return `https://unavatar.io/${domain}`;
-        };
-
-        return (
-          <div className="flex items-center">
-            <img
-              src={getLogoUrl(row.company, row.headquarter || '')}
-              alt={`${row.company} logo`}
-              className="w-6 h-6 mr-2"
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = 'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg';
-              }} // Fallback to default image if not found
-            />
-            {row.company}
-          </div>
-        );
-      case 'date':
-        return new Date(row[header]).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        });
-      case 'googleSearch':
-        return (
-          <a
-            href={`https://www.google.com/search?q=${encodeURIComponent(`${row.company} ${row.headquarters || 'US'} layoffs`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 dark:text-blue-400 flex items-center justify-center hover:text-blue-800 dark:hover:text-blue-300"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14 3h7m0 0v7m0-7L10 14m-4 7h11a2 2 0 002-2V10m-7 11H5a2 2 0 01-2-2V7a2 2 0 012-2h7" />
-            </svg>
-          </a>
-        );
-      case 'laidOff':
-        return row[header]?.toLocaleString() || 'N/A';
-      case 'headquarter': // Handle missing location data
-        return row[header] || 'US';
-      default:
-        return row[header];
-    }
-  };
-
-  // Pagination logic
-  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-  const paginatedData = filteredData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
-
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS));
+  const paged = filtered.slice((page - 1) * ROWS, page * ROWS);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
-    setCurrentPage(1);
+    setPage(1);
+  };
+
+  const share = useCallback(async (row: Record<string, any>) => {
+    const slug = encodeURIComponent(row.company.toLowerCase());
+    const url = `${window.location.origin}/layoffstracker/company/${slug}`;
+    const text = `${row.company} laid off ${row.laidOff?.toLocaleString()} employees 📉`;
+    if (navigator.share) {
+      await navigator.share({ title: `${row.company} Layoffs`, text, url });
+    } else {
+      window.open(
+        `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+        "_blank",
+      );
+    }
+  }, []);
+
+  const headers = [
+    "date",
+    ...Object.keys(data[0]).filter((k) => k !== "date"),
+    "_share",
+    "_link",
+  ];
+
+  const headerLabel = (h: string) => {
+    if (h === "_share" || h === "_link") return "";
+    if (h === "headquarter") return "Location";
+    if (h === "laidOff") return "Laid Off";
+    return h.charAt(0).toUpperCase() + h.slice(1);
+  };
+
+  const cell = (h: string, row: Record<string, any>) => {
+    switch (h) {
+      case "company":
+        return (
+          <Link
+            to={`/company/${encodeURIComponent(row.company.toLowerCase())}`}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              textDecoration: "none",
+              color: "inherit",
+            }}
+          >
+            <img
+              src={getLogoUrl(row.company)}
+              alt=""
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 5,
+                objectFit: "contain",
+                background: "#fff",
+                padding: 0,
+                border: "1px solid var(--border)",
+                flexShrink: 0,
+              }}
+              onError={(e) => {
+                const t = e.currentTarget;
+                if (!t.dataset.fb) {
+                  t.dataset.fb = "1";
+                  t.src = getFallbackLogoUrl(row.company);
+                } else
+                  t.src =
+                    "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg";
+              }}
+            />
+            <span
+              style={{
+                fontSize: 13,
+                fontWeight: 500,
+                color: isDarkMode ? "#818cf8" : "#0057FF",
+              }}
+            >
+              {row.company}
+            </span>
+          </Link>
+        );
+      case "date":
+        return (
+          <span
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 12,
+              color: isDarkMode ? "#5a5955" : "#9e9c96",
+            }}
+          >
+            {new Date(row.date).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })}
+          </span>
+        );
+      case "laidOff":
+        return (
+          <span
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 13,
+              fontWeight: 600,
+              color: isDarkMode ? "#f87171" : "#E8340A",
+            }}
+          >
+            {row.laidOff?.toLocaleString() ?? "—"}
+          </span>
+        );
+      case "headquarter":
+        return (
+          <span
+            style={{ fontSize: 12, color: isDarkMode ? "#9e9c96" : "#6b6860" }}
+          >
+            {row.headquarter || "US"}
+          </span>
+        );
+      case "_share":
+        return;
+      case "_link":
+        return (
+          <a
+            href={`https://www.google.com/search?q=${encodeURIComponent(`${row.company} layoffs`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: isDarkMode ? "#3a3a35" : "#c8c5bc",
+              display: "flex",
+              alignItems: "center",
+              padding: 4,
+              borderRadius: 6,
+              transition: "color .15s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.color = isDarkMode ? "#9e9c96" : "#6b6860")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.color = isDarkMode ? "#3a3a35" : "#c8c5bc")
+            }
+          >
+            <ExternalLink size={14} />
+          </a>
+        );
+      default:
+        return (
+          <span
+            style={{ fontSize: 12, color: isDarkMode ? "#9e9c96" : "#6b6860" }}
+          >
+            {row[h]}
+          </span>
+        );
+    }
   };
 
   return (
-    <div className="table-container my-4">
-      {/* Search bar */}
-      <div className="relative mb-3">
-        <svg xmlns="http://www.w3.org/2000/svg" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
-        </svg>
-        <input
-          type="text"
-          value={search}
-          onChange={handleSearch}
-          placeholder="Search by company or location…"
-          className="w-full pl-9 pr-9 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-        />
-        {search && (
-          <button
-            onClick={() => { setSearch(''); setCurrentPage(1); }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+    <div>
+      {/* Search */}
+      <div
+        style={{
+          padding: "12px 20px",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
+        <div style={{ position: "relative", maxWidth: 360 }}>
+          <svg
+            style={{
+              position: "absolute",
+              left: 12,
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: isDarkMode ? "#3a3a35" : "#c8c5bc",
+            }}
+            width={14}
+            height={14}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
           >
-            ✕
-          </button>
+            <circle cx={11} cy={11} r={8} />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+          <input
+            type="text"
+            value={search}
+            onChange={handleSearch}
+            placeholder="Search companies or locations…"
+            style={{
+              width: "100%",
+              padding: "8px 32px 8px 36px",
+              borderRadius: 8,
+              border: `1.5px solid ${isDarkMode ? "#2a2a26" : "#e2e0da"}`,
+              background: isDarkMode ? "#1a1a18" : "#f7f6f3",
+              color: isDarkMode ? "#f0efe9" : "#1a1916",
+              fontSize: 13,
+              fontFamily: "var(--font-body)",
+              outline: "none",
+            }}
+            onFocus={(e) =>
+              (e.target.style.borderColor = isDarkMode ? "#818cf8" : "#0057FF")
+            }
+            onBlur={(e) =>
+              (e.target.style.borderColor = isDarkMode ? "#2a2a26" : "#e2e0da")
+            }
+          />
+          {search && (
+            <button
+              onClick={() => {
+                setSearch("");
+                setPage(1);
+              }}
+              style={{
+                position: "absolute",
+                right: 10,
+                top: "50%",
+                transform: "translateY(-50%)",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: isDarkMode ? "#5a5955" : "#9e9c96",
+                fontSize: 12,
+                padding: 2,
+              }}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        {search && filtered.length === 0 && (
+          <p
+            style={{
+              fontSize: 12,
+              color: isDarkMode ? "#5a5955" : "#9e9c96",
+              marginTop: 8,
+            }}
+          >
+            No results for "{search}"
+          </p>
         )}
       </div>
-      {filteredData.length === 0 && search && (
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">No results for "{search}"</p>
-      )}
-      <div className="overflow-x-auto">
-        <table className="table-auto w-full text-left border-collapse bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
-          <thead className="bg-gray-100 dark:bg-gray-700 sticky top-0">
+
+      <div style={{ overflowX: "auto" }}>
+        <table className="data-table">
+          <thead>
             <tr>
-              {headers.map((header) => (
+              {headers.map((h) => (
                 <th
-                  key={header}
-                  className={`border border-gray-300 dark:border-gray-600 px-4 py-2 font-semibold text-gray-900 dark:text-white ${header === 'googleSearch' ? 'w-12' : ''}`}
-                  style={header === 'googleSearch' ? { width: '50px' } : header === 'date' ? { width: '160px' } : undefined}
+                  key={h}
+                  style={{
+                    width: h === "_share" || h === "_link" ? 36 : undefined,
+                    textAlign:
+                      h === "_share" || h === "_link" ? "center" : undefined,
+                  }}
                 >
-                  {header === 'googleSearch'
-                    ? 'Link'
-                    : header === 'headquarter' // Rename "headquarters" to "City"
-                    ? 'Location'
-                    : toCamelCase(header)}
+                  {headerLabel(h)}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {paginatedData.map((row, index) => (
-              <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
-                {headers.map((header) => (
-                  <td key={header} className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-gray-100">
-                    {renderCellContent(header, row)}
+            {paged.map((row, i) => (
+              <tr key={i}>
+                {headers.map((h) => (
+                  <td
+                    key={h}
+                    style={{
+                      textAlign:
+                        h === "_share" || h === "_link" ? "center" : undefined,
+                    }}
+                  >
+                    {cell(h, row)}
                   </td>
                 ))}
               </tr>
@@ -242,32 +305,74 @@ const LayoffTable: React.FC<LayoffTableProps> = ({ data, isDarkMode = false }) =
         </table>
       </div>
 
-      {/* Pagination Controls */}
-      <div className="flex justify-between items-center mt-4">
+      {/* Pagination */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "12px 20px",
+          borderTop: "1px solid var(--border)",
+        }}
+      >
         <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className={`px-4 py-2 border rounded transition-colors duration-150 ${
-            currentPage === 1
-              ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed border-gray-300 dark:border-gray-600'
-              : 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600'
-          }`}
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={page === 1}
+          style={{
+            padding: "6px 14px",
+            borderRadius: 7,
+            fontSize: 12,
+            border: `1.5px solid ${isDarkMode ? "#2a2a26" : "#e2e0da"}`,
+            background: "transparent",
+            color:
+              page === 1
+                ? isDarkMode
+                  ? "#3a3a35"
+                  : "#c8c5bc"
+                : isDarkMode
+                  ? "#9e9c96"
+                  : "#6b6860",
+            cursor: page === 1 ? "default" : "pointer",
+            fontFamily: "var(--font-body)",
+            fontWeight: 500,
+          }}
         >
-          Previous
+          ← Prev
         </button>
-        <span className="text-sm text-gray-900 dark:text-white">
-          {search ? `${filteredData.length} result${filteredData.length !== 1 ? 's' : ''} · ` : ''}Page {currentPage} of {totalPages || 1}
+        <span
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 11,
+            color: isDarkMode ? "#5a5955" : "#9e9c96",
+            letterSpacing: ".04em",
+          }}
+        >
+          {search ? `${filtered.length.toLocaleString()} results · ` : ""}
+          {page} / {totalPages}
         </span>
         <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className={`px-4 py-2 border rounded transition-colors duration-150 ${
-            currentPage === totalPages
-              ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed border-gray-300 dark:border-gray-600'
-              : 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600'
-          }`}
+          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          disabled={page === totalPages}
+          style={{
+            padding: "6px 14px",
+            borderRadius: 7,
+            fontSize: 12,
+            border: `1.5px solid ${isDarkMode ? "#2a2a26" : "#e2e0da"}`,
+            background: "transparent",
+            color:
+              page === totalPages
+                ? isDarkMode
+                  ? "#3a3a35"
+                  : "#c8c5bc"
+                : isDarkMode
+                  ? "#9e9c96"
+                  : "#6b6860",
+            cursor: page === totalPages ? "default" : "pointer",
+            fontFamily: "var(--font-body)",
+            fontWeight: 500,
+          }}
         >
-          Next
+          Next →
         </button>
       </div>
     </div>
