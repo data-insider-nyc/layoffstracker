@@ -8,7 +8,7 @@ import compression from 'vite-plugin-compression'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/layoffstracker",
+  base: process.env.VITE_BASE_URL ?? "/",
   plugins: [
     react(),
     tailwindcss(),

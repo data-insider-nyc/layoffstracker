@@ -32,6 +32,8 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_BASE_URL: /layoffstracker/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
