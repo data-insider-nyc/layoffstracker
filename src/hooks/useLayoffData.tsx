@@ -27,7 +27,7 @@ export const useLayoffData = (): LayoffData[] => {
   const [data, setData] = useState<LayoffData[]>([])
 
   useEffect(() => {
-    fetch('/layoffstracker/data/layoffs.csv')
+    fetch(`${import.meta.env.BASE_URL}data/layoffs.csv`)
       .then((res) => res.text())
       .then((csv) => {
         const parsed = Papa.parse(csv, { header: true, skipEmptyLines: true }).data as Array<{

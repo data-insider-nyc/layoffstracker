@@ -168,7 +168,7 @@ export default function App() {
   };
 
   return (
-    <Router basename="/layoffstracker">
+    <Router basename={import.meta.env.BASE_URL}>
       <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
         {/* Nav */}
         <nav
