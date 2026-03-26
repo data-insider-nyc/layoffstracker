@@ -12,7 +12,13 @@ const PALETTE_DARK  = ["#818cf8","#60a5fa","#38bdf8","#2dd4bf","#4ade80","#a3e63
 
 const TOP_N = 10;
 
-const CustomTooltip = ({ active, payload, isDarkMode }: any) => {
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{ value: number; payload: { company: string } }>;
+  isDarkMode?: boolean;
+}
+
+const CustomTooltip = ({ active, payload, isDarkMode }: TooltipProps) => {
   if (!active || !payload?.length) return null;
   return (
     <div style={{
@@ -31,8 +37,15 @@ const CustomTooltip = ({ active, payload, isDarkMode }: any) => {
   );
 };
 
+interface TickProps {
+  x?: number;
+  y?: number;
+  payload?: { value: string };
+  isDarkMode?: boolean;
+}
+
 // Clickable company name as Y-axis tick
-const CompanyTick = ({ x, y, payload, isDarkMode }: any) => {
+const CompanyTick = ({ x, y, payload, isDarkMode }: TickProps) => {
   const slug = encodeURIComponent((payload.value as string).toLowerCase());
   return (
     <foreignObject x={x - 148} y={y - 10} width={145} height={22}>

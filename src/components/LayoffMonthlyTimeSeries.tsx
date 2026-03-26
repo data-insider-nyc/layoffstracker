@@ -1,7 +1,7 @@
 import React from "react";
 import {
   ComposedChart, Bar, Line, XAxis, YAxis,
-  CartesianGrid, Tooltip, ResponsiveContainer, Legend, LabelList,
+  CartesianGrid, Tooltip, ResponsiveContainer, LabelList,
 } from "recharts";
 
 interface Props {
@@ -9,7 +9,22 @@ interface Props {
   isDarkMode?: boolean;
 }
 
-const CustomTooltip = ({ active, payload, label, isDarkMode, isDaily }: any) => {
+interface PayloadEntry {
+  dataKey: string;
+  fill?: string;
+  stroke?: string;
+  value: number;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: PayloadEntry[];
+  label?: string;
+  isDarkMode?: boolean;
+  isDaily?: boolean;
+}
+
+const CustomTooltip = ({ active, payload, label, isDarkMode, isDaily }: CustomTooltipProps) => {
   if (!active || !payload?.length) return null;
   return (
     <div style={{
@@ -20,7 +35,7 @@ const CustomTooltip = ({ active, payload, label, isDarkMode, isDaily }: any) => 
       fontFamily: "var(--font-body)",
     }}>
       <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: isDarkMode ? "#9e9c96" : "#6b6860", marginBottom: 8, letterSpacing: ".04em" }}>{label}</p>
-      {payload.map((p: any) => (
+      {payload.map((p: PayloadEntry) => (
         <div key={p.dataKey} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, marginBottom: 3 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div style={{ width: 8, height: 8, borderRadius: 2, background: p.fill || p.stroke }} />

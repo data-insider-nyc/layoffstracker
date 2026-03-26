@@ -21,7 +21,21 @@ const YEAR_COLORS: Record<number, string> = {
   2026: "#f87171",
 };
 
-const CustomTooltip = ({ active, payload, label, isDarkMode }: any) => {
+interface YoYPayloadEntry {
+  dataKey: string;
+  fill?: string;
+  name?: string;
+  value: number;
+}
+
+interface YoYTooltipProps {
+  active?: boolean;
+  payload?: YoYPayloadEntry[];
+  label?: string;
+  isDarkMode?: boolean;
+}
+
+const CustomTooltip = ({ active, payload, label, isDarkMode }: YoYTooltipProps) => {
   if (!active || !payload?.length) return null;
   return (
     <div style={{
@@ -36,7 +50,7 @@ const CustomTooltip = ({ active, payload, label, isDarkMode }: any) => {
       <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: isDarkMode ? "#9e9c96" : "#6b6860", marginBottom: 8, letterSpacing: ".04em", textTransform: "uppercase" }}>
         {label}
       </p>
-      {payload.map((p: any) => (
+      {payload.map((p: YoYPayloadEntry) => (
         <div key={p.dataKey} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, marginBottom: 3 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div style={{ width: 8, height: 8, borderRadius: 2, background: p.fill }} />

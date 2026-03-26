@@ -12,7 +12,14 @@ import { getLogoUrl } from "../lib/logoUtils";
 
 interface Props { data: LayoffData[]; isDarkMode?: boolean; }
 
-const LayoffTooltip = ({ active, payload, label, isDarkMode }: any) => {
+interface LayoffTooltipProps {
+  active?: boolean;
+  payload?: Array<{ value: number }>;
+  label?: string;
+  isDarkMode?: boolean;
+}
+
+const LayoffTooltip = ({ active, payload, label, isDarkMode }: LayoffTooltipProps) => {
   if (!active || !payload?.length) return null;
   return (
     <div style={{
@@ -73,14 +80,6 @@ const CompanyPage: React.FC<Props> = ({ data, isDarkMode = false }) => {
 
   const axis  = { fill: isDarkMode ? "#5a5955" : "#9e9c96", fontSize: 11, fontFamily: "var(--font-mono)" };
   const grid  = isDarkMode ? "#2a2a26" : "#e2e0da";
-  const tooltip = {
-    background: isDarkMode ? "#1c1c1a" : "#fff",
-    border: `1px solid ${isDarkMode ? "#2a2a26" : "#e2e0da"}`,
-    borderRadius: 10, padding: "10px 14px",
-    boxShadow: "0 8px 24px rgba(0,0,0,.12)", fontSize: 12,
-    color: isDarkMode ? "#f0efe9" : "#1a1916",
-    fontFamily: "var(--font-body)",
-  };
   const chartCard = {
     background: "var(--bg-card)", border: "1px solid var(--border)",
     borderRadius: "var(--radius-lg)", padding: 20, boxShadow: "var(--shadow-sm)",

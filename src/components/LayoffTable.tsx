@@ -1,10 +1,11 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Share2, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { getLogoUrl, getFallbackLogoUrl } from "../lib/logoUtils";
+import { LayoffData } from "../hooks/useLayoffData";
 
 interface Props {
-  data: Array<Record<string, any>>;
+  data: LayoffData[];
   isDarkMode?: boolean;
 }
 
@@ -30,20 +31,6 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
     setPage(1);
   };
 
-  const share = useCallback(async (row: Record<string, any>) => {
-    const slug = encodeURIComponent(row.company.toLowerCase());
-    const url = `${window.location.origin}/layoffstracker/company/${slug}`;
-    const text = `${row.company} laid off ${row.laidOff?.toLocaleString()} employees 📉`;
-    if (navigator.share) {
-      await navigator.share({ title: `${row.company} Layoffs`, text, url });
-    } else {
-      window.open(
-        `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-        "_blank",
-      );
-    }
-  }, []);
-
   const headers = [
     "date",
     ...Object.keys(data[0]).filter((k) => k !== "date"),
@@ -58,7 +45,7 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
     return h.charAt(0).toUpperCase() + h.slice(1);
   };
 
-  const cell = (h: string, row: Record<string, any>) => {
+  const cell = (h: string, row: LayoffData) => {
     switch (h) {
       case "company":
         return (

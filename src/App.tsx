@@ -2,7 +2,7 @@ import React, { useState, Suspense, useEffect, useMemo } from "react";
 import LayoffTable from "./components/LayoffTable";
 import { useLayoffData } from "./hooks/useLayoffData";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import { Moon, Sun, TrendingDown, GitBranch } from "lucide-react";
+import { TrendingDown, GitBranch } from "lucide-react";
 import KpiCard from "./components/KpiCard";
 import CompanyPage from "./components/CompanyPage";
 import SEOHead from "./components/SEOHead";
@@ -55,7 +55,7 @@ export default function App() {
   const data = useLayoffData();
   const [selectedYear, setSelectedYear] = useState("ALL");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
-  const [isDarkMode, setIsDarkMode] = useState(() => {
+  const [isDarkMode] = useState(() => {
     const saved = localStorage.getItem("darkMode");
     return saved !== null
       ? JSON.parse(saved)

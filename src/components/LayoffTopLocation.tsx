@@ -43,7 +43,20 @@ const getBarColor = (index: number, total: number, isDarkMode: boolean): string 
   }
 };
 
-const CustomTooltip = ({ active, payload, isDarkMode }: any) => {
+interface TooltipPayload {
+  state: string;
+  laidOff: number;
+  companies: number;
+  percentage: string;
+}
+
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{ payload: TooltipPayload }>;
+  isDarkMode?: boolean;
+}
+
+const CustomTooltip = ({ active, payload, isDarkMode }: TooltipProps) => {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
