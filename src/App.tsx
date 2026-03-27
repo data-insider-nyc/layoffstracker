@@ -77,17 +77,6 @@ export default function App() {
           ),
     [yearFilteredData, selectedCategory],
   );
-  const categoryFilteredData = useMemo(
-    () =>
-      selectedCategory === "ALL"
-        ? data
-        : data.filter((d) =>
-            selectedCategory === "DOGE"
-              ? d.company.includes("Department")
-              : !d.company.includes("Department"),
-          ),
-    [data, selectedCategory],
-  );
   const { totalLayoffs, totalCompanies, avgLayoffs, largestEvent } =
     useMemo(() => {
       const totalLayoffs = filteredData.reduce((s, d) => s + d.laidOff, 0);
@@ -492,7 +481,7 @@ export default function App() {
                               <Suspense
                                 fallback={<ChartSkeleton height={380} />}
                               >
-                                <LayoffYoYChart data={categoryFilteredData} />
+                                <LayoffYoYChart data={filteredData} />
                               </Suspense>
                             </ErrorBoundary>
                           </div>
