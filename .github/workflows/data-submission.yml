@@ -1,0 +1,112 @@
+name: Auto-add layoff data from issue
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  add-data:
+    # Only run when the data-submission label is applied
+    if: github.event.label.name == 'data-submission'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse issue body
+        id: parse
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.issue.body ?? '';
+
+            const extract = (label) => {
+              const re = new RegExp(`\\*\\*${label}:\\*\\*\\s*(.+)`);
+              const m = body.match(re);
+              return m ? m[1].trim() : '';
+            };
+
+            const company  = extract('Company');
+            const layoffs  = extract('Layoffs \\(headcount\\)');
+            const date     = extract('Date');
+            const location = extract('Location \\(HQ\\)');
+            const source   = extract('Source / Link');
+
+            if (!company || !layoffs || !date) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                issue_number: context.payload.issue.number,
+                body: '❌ Could not parse required fields (Company, Layoffs, Date). Please check the issue format.',
+              });
+              core.setFailed('Missing required fields');
+              return;
+            }
+
+            // Sanitize: strip commas to keep CSV valid
+            const clean = (s) => s.replace(/,/g, ' ').replace(/^N\/A$/i, '');
+
+            core.setOutput('company',  clean(company));
+            core.setOutput('layoffs',  layoffs.replace(/[^0-9]/g, ''));
+            core.setOutput('date',     date);
+            core.setOutput('location', clean(location));
+            core.setOutput('branch',   `data/issue-${context.payload.issue.number}`);
+
+      - name: Append row to CSV and push branch
+        env:
+          COMPANY:  ${{ steps.parse.outputs.company }}
+          LAYOFFS:  ${{ steps.parse.outputs.layoffs }}
+          DATE:     ${{ steps.parse.outputs.date }}
+          LOCATION: ${{ steps.parse.outputs.location }}
+          BRANCH:   ${{ steps.parse.outputs.branch }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -b "$BRANCH"
+
+          # Append: Company,headquarter,layoff,Date
+          printf '%s,%s,%s,%s\n' "$COMPANY" "$LOCATION" "$LAYOFFS" "$DATE" \
+            >> public/data/layoffs.csv
+
+          git add public/data/layoffs.csv
+          git commit -m "data: add $COMPANY layoffs (issue #${{ github.event.issue.number }})"
+          git push origin "$BRANCH"
+
+      - name: Create pull request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const pr = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              title: `[Data] ${{ steps.parse.outputs.company }} – ${{ steps.parse.outputs.layoffs }} layoffs on ${{ steps.parse.outputs.date }}`,
+              head:  `${{ steps.parse.outputs.branch }}`,
+              base:  'main',
+              body: [
+                `Closes #${issue.number}`,
+                '',
+                'Automatically generated from community issue submission.',
+                '',
+                '| Field | Value |',
+                '|-------|-------|',
+                `| **Company**  | ${{ steps.parse.outputs.company }}  |`,
+                `| **Layoffs**  | ${{ steps.parse.outputs.layoffs }}  |`,
+                `| **Date**     | ${{ steps.parse.outputs.date }}     |`,
+                `| **Location** | ${{ steps.parse.outputs.location }} |`,
+              ].join('\n'),
+            });
+
+            // Comment on the original issue with PR link
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              issue_number: issue.number,
+              body: `✅ Thanks for the submission! A PR has been opened to add this data: ${pr.data.html_url}\n\nIt will be merged after a quick review.`,
+            });
