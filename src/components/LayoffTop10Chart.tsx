@@ -44,7 +44,7 @@ interface TickProps {
 const CompanyTick = ({ x, y, payload }: TickProps) => {
   const slug = encodeURIComponent((payload.value as string).toLowerCase());
   return (
-    <foreignObject x={x - 148} y={y - 10} width={145} height={22}>
+    <foreignObject x={x - 168} y={y - 10} width={165} height={22}>
       <div style={{ display: "flex", alignItems: "center", height: "100%", justifyContent: "flex-end" }}>
         <Link
           to={`/company/${slug}`}
@@ -102,7 +102,7 @@ const LayoffTop10Chart: React.FC<Props> = ({ data }) => {
             tick={(props) => <CompanyTick {...props} />}
             axisLine={false}
             tickLine={false}
-            width={152}
+          width={172}
           />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(0,0,0,.02)" }} />
           <Bar dataKey="laidOff" radius={[0, 6, 6, 0]} maxBarSize={22}>
