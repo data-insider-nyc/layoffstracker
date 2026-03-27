@@ -5,25 +5,30 @@ type Props = {
   data: Array<{ company: string; headquarter?: string; laidOff: number; date: Date }>;
 };
 
-const cityToStateMap: Record<string, string> = {
-  "San Francisco": "SF Bay Area", "Palo Alto": "SF Bay Area", "Menlo Park": "SF Bay Area",
-  "Sunnyvale": "SF Bay Area", "Mountain View": "SF Bay Area", "Redwood City": "SF Bay Area",
-  "Santa Clara": "SF Bay Area", "San Jose": "SF Bay Area", "Oakland": "SF Bay Area",
-  "Los Angeles": "California (Other)", "San Diego": "California (Other)",
-  "Seattle": "Washington", "Bellevue": "Washington", "Redmond": "Washington",
-  "New York City": "New York", "New York": "New York",
-  "Atlanta": "Georgia", "Austin": "Texas", "Dallas": "Texas", "Houston": "Texas",
-  "Chicago": "Illinois", "Denver": "Colorado", "Boston": "Massachusetts",
-  "Cambridge": "Massachusetts", "Washington D.C.": "Washington D.C.",
-  "Detroit": "Michigan", "Portland": "Oregon",
+// Normalize known variants to canonical metro names
+const LOCATION_ALIASES: Record<string, string> = {
+  "San Francisco": "SF Bay Area",
+  "SF": "SF Bay Area",
+  "Palo Alto": "SF Bay Area",
+  "Menlo Park": "SF Bay Area",
+  "Sunnyvale": "SF Bay Area",
+  "Mountain View": "SF Bay Area",
+  "Redwood City": "SF Bay Area",
+  "Santa Clara": "SF Bay Area",
+  "San Jose": "SF Bay Area",
+  "Oakland": "SF Bay Area",
+  "Bellevue": "Seattle",
+  "Redmond": "Seattle",
+  "New York": "New York City",
+  "McLean VA": "Washington D.C.",
+  "Bethesda": "Washington D.C.",
+  "Northern Virginia": "Washington D.C.",
 };
 
-const extractState = (hq: string | undefined): string => {
+const normalizeLocation = (hq: string | undefined): string => {
   if (!hq) return "Unknown";
-  for (const [city, state] of Object.entries(cityToStateMap)) {
-    if (hq.toLowerCase().includes(city.toLowerCase())) return state;
-  }
-  return hq.trim();
+  const trimmed = hq.trim();
+  return LOCATION_ALIASES[trimmed] ?? trimmed;
 };
 
 // Graduated red scale — most layoffs = darkest
@@ -68,7 +73,7 @@ const LayoffTopLocation: React.FC<Props> = ({ data }) => {
   const aggregatedData = React.useMemo(() => {
     const stateData: Record<string, { laidOff: number; companies: Set<string> }> = {};
     data.forEach(({ company, headquarter, laidOff }) => {
-      const state = extractState(headquarter);
+      const state = normalizeLocation(headquarter);
       if (!stateData[state]) stateData[state] = { laidOff: 0, companies: new Set() };
       stateData[state].laidOff += laidOff;
       stateData[state].companies.add(company);
@@ -86,9 +91,9 @@ const LayoffTopLocation: React.FC<Props> = ({ data }) => {
   const grid = "var(--border)";
 
   return (
-    <div style={{ width: "100%", height: 440 }} role="img" aria-label="Bar chart showing top US states by total layoffs">
+    <div style={{ width: "100%", height: 440 }} role="img" aria-label="Bar chart showing top locations by total layoffs">
       <h2 style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 400, color: "#1a1916", marginBottom: 20, paddingLeft: 4 }}>
-        Top States by Layoffs
+        Top Locations by Layoffs
       </h2>
       <ResponsiveContainer width="100%" height={370}>
         <BarChart data={aggregatedData} layout="vertical" margin={{ top: 4, right: 72, left: 0, bottom: 4 }}>
