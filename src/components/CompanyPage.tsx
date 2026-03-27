@@ -10,33 +10,32 @@ import ErrorBoundary from "./ErrorBoundary";
 import { LayoffData } from "../hooks/useLayoffData";
 import { getLogoUrl } from "../lib/logoUtils";
 
-interface Props { data: LayoffData[]; isDarkMode?: boolean; }
+interface Props { data: LayoffData[]; }
 
 interface LayoffTooltipProps {
   active?: boolean;
   payload?: Array<{ value: number }>;
   label?: string;
-  isDarkMode?: boolean;
 }
 
-const LayoffTooltip = ({ active, payload, label, isDarkMode }: LayoffTooltipProps) => {
+const LayoffTooltip = ({ active, payload, label }: LayoffTooltipProps) => {
   if (!active || !payload?.length) return null;
   return (
     <div style={{
-      background: isDarkMode ? "#1c1c1a" : "#fff",
-      border: `1px solid ${isDarkMode ? "#2a2a26" : "#e2e0da"}`,
+      background: "var(--bg-card)",
+      border: "1px solid var(--border)",
       borderRadius: 10, padding: "10px 14px",
       boxShadow: "0 8px 24px rgba(0,0,0,.12)", fontFamily: "var(--font-body)",
     }}>
-      <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: isDarkMode ? "#9e9c96" : "#6b6860", marginBottom: 4 }}>{label}</p>
-      <p style={{ fontFamily: "var(--font-mono)", fontSize: 14, fontWeight: 600, color: isDarkMode ? "#f87171" : "#E8340A" }}>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-secondary)", marginBottom: 4 }}>{label}</p>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: 14, fontWeight: 600, color: "var(--accent)" }}>
         {Number(payload[0].value).toLocaleString()} laid off
       </p>
     </div>
   );
 };
 
-const CompanyPage: React.FC<Props> = ({ data, isDarkMode = false }) => {
+const CompanyPage: React.FC<Props> = ({ data }) => {
   const { slug } = useParams<{ slug: string }>();
 
   const companyName = useMemo(() => {
@@ -78,8 +77,8 @@ const CompanyPage: React.FC<Props> = ({ data, isDarkMode = false }) => {
     }
   };
 
-  const axis  = { fill: isDarkMode ? "#5a5955" : "#9e9c96", fontSize: 11, fontFamily: "var(--font-mono)" };
-  const grid  = isDarkMode ? "#2a2a26" : "#e2e0da";
+  const axis  = { fill: "#9e9c96", fontSize: 11, fontFamily: "var(--font-mono)" };
+  const grid  = "var(--border)";
   const chartCard = {
     background: "var(--bg-card)", border: "1px solid var(--border)",
     borderRadius: "var(--radius-lg)", padding: 20, boxShadow: "var(--shadow-sm)",
@@ -172,10 +171,10 @@ const CompanyPage: React.FC<Props> = ({ data, isDarkMode = false }) => {
                   <CartesianGrid strokeDasharray="2 4" stroke={grid} vertical={false} />
                   <XAxis dataKey="month" tick={{ ...axis, fontSize: 10 }} axisLine={false} tickLine={false} angle={-40} textAnchor="end" height={40} interval="preserveStartEnd" />
                   <YAxis tick={axis} axisLine={false} tickLine={false} tickFormatter={(v) => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v} />
-                  <Tooltip content={<LayoffTooltip isDarkMode={isDarkMode} />} cursor={{ fill: isDarkMode ? "rgba(255,255,255,.02)" : "rgba(0,0,0,.02)" }} />
-                  <Bar dataKey="total" fill={isDarkMode ? "#818cf8" : "#0057FF"} radius={[4, 4, 0, 0]} maxBarSize={24}>
+                  <Tooltip content={<LayoffTooltip />} cursor={{ fill: "rgba(0,0,0,.02)" }} />
+                  <Bar dataKey="total" fill="var(--accent-blue)" radius={[4, 4, 0, 0]} maxBarSize={24}>
                     <LabelList dataKey="total" position="top" formatter={(v: number) => v > 0 ? v.toLocaleString() : ""}
-                      style={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: isDarkMode ? "#5a5955" : "#9e9c96" }} />
+                      style={{ fontSize: 9, fontFamily: "var(--font-mono)", fill: "#9e9c96" }} />
                   </Bar>
                 </ComposedChart>
               </ResponsiveContainer>
@@ -192,10 +191,10 @@ const CompanyPage: React.FC<Props> = ({ data, isDarkMode = false }) => {
                     <CartesianGrid strokeDasharray="2 4" stroke={grid} vertical={false} />
                     <XAxis dataKey="year" tick={axis} axisLine={false} tickLine={false} />
                     <YAxis tick={axis} axisLine={false} tickLine={false} tickFormatter={(v) => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v} />
-                    <Tooltip content={<LayoffTooltip isDarkMode={isDarkMode} />} cursor={{ fill: isDarkMode ? "rgba(255,255,255,.02)" : "rgba(0,0,0,.02)" }} />
-                    <Bar dataKey="total" fill={isDarkMode ? "#34d399" : "#0D7A45"} radius={[4, 4, 0, 0]} maxBarSize={40}>
+                    <Tooltip content={<LayoffTooltip />} cursor={{ fill: "rgba(0,0,0,.02)" }} />
+                    <Bar dataKey="total" fill="#0D7A45" radius={[4, 4, 0, 0]} maxBarSize={40}>
                       <LabelList dataKey="total" position="top" formatter={(v: number) => v.toLocaleString()}
-                        style={{ fontSize: 10, fontFamily: "var(--font-mono)", fill: isDarkMode ? "#5a5955" : "#9e9c96" }} />
+                        style={{ fontSize: 10, fontFamily: "var(--font-mono)", fill: "#9e9c96" }} />
                     </Bar>
                   </ComposedChart>
                 </ResponsiveContainer>
@@ -224,14 +223,14 @@ const CompanyPage: React.FC<Props> = ({ data, isDarkMode = false }) => {
                       <td><span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-secondary)" }}>
                         {new Date(row.date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
                       </span></td>
-                      <td><span style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 600, color: isDarkMode ? "#f87171" : "#E8340A" }}>
+                      <td><span style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 600, color: "var(--accent)" }}>
                         {row.laidOff.toLocaleString()}
                       </span></td>
                       <td><span style={{ fontSize: 12, color: "var(--text-secondary)" }}>{row.headquarter ?? "US"}</span></td>
                       <td>
                         <a href={`https://www.google.com/search?q=${encodeURIComponent(`${companyName} ${new Date(row.date).getFullYear()} layoffs`)}`}
                           target="_blank" rel="noopener noreferrer"
-                          style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 11, color: isDarkMode ? "#818cf8" : "#0057FF", textDecoration: "none", fontFamily: "var(--font-mono)" }}>
+                          style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 11, color: "var(--accent-blue)", textDecoration: "none", fontFamily: "var(--font-mono)" }}>
                           <ExternalLink size={11} /> Search
                         </a>
                       </td>

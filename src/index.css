@@ -2,8 +2,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
 /* ── Design Tokens ──────────────────────────────────────────────────────── */
 :root {
   --font-display: 'DM Serif Display', Georgia, serif;
@@ -40,28 +38,6 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-}
-
-.dark {
-  --bg:           #0F0F0E;
-  --bg-card:      #181816;
-  --bg-subtle:    #1E1E1B;
-  --border:       #2A2A26;
-  --border-strong:#3A3A35;
-  --text-primary: #F0EFE9;
-  --text-secondary:#9E9C96;
-  --text-muted:   #5A5955;
-  --accent:       #FF4D2A;
-  --accent-soft:  #1F1007;
-  --accent-blue:  #4D8FFF;
-  --accent-blue-soft: #0A0F1F;
-  --success:      #22C55E;
-  --success-soft: #071910;
-
-  --shadow-sm:  0 1px 3px rgba(0,0,0,.3);
-  --shadow-md:  0 4px 16px rgba(0,0,0,.4);
-  --shadow-lg:  0 16px 48px rgba(0,0,0,.5);
-  --shadow-glow:0 0 32px rgba(255,77,42,.2);
 }
 
 /* ── Reset & Base ───────────────────────────────────────────────────────── */

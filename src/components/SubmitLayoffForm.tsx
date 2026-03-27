@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { X, Send } from "lucide-react";
 
 interface Props {
-  isDarkMode?: boolean;
+  // no props needed
 }
 
 /**
@@ -18,7 +18,7 @@ interface Props {
  */
 const TALLY_FORM_ID = "YOUR_TALLY_FORM_ID"; // ← replace this
 
-const SubmitLayoffForm: React.FC<Props> = ({ isDarkMode = false }) => {
+const SubmitLayoffForm: React.FC<Props> = () => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -44,17 +44,15 @@ const SubmitLayoffForm: React.FC<Props> = ({ isDarkMode = false }) => {
 
           {/* Panel */}
           <div
-            className={`relative w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden ${
-              isDarkMode ? "bg-gray-800" : "bg-white"
-            }`}
+            className="relative w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden bg-white"
           >
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="font-semibold text-gray-900 dark:text-white">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+              <h2 className="font-semibold text-gray-900">
                 Submit a Layoff Event
               </h2>
               <button
                 onClick={() => setOpen(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -64,21 +62,21 @@ const SubmitLayoffForm: React.FC<Props> = ({ isDarkMode = false }) => {
               // Placeholder until Tally form is configured
               <div className="p-6 text-center">
                 <p className="text-4xl mb-3">📋</p>
-                <p className="text-gray-700 dark:text-gray-300 font-medium mb-2">
+                <p className="text-gray-700 font-medium mb-2">
                   Submission form coming soon
                 </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                <p className="text-sm text-gray-500 mb-4">
                   Help us keep the data fresh! Once the form is live you'll be able to
                   submit layoff events directly here.
                 </p>
-                <p className="text-xs text-gray-400 dark:text-gray-500">
+                <p className="text-xs text-gray-400">
                   In the meantime, open a GitHub issue or PR to add data.
                 </p>
                 <a
                   href="https://github.com/data-insider-nyc/layoffstracker/issues/new"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-block px-4 py-2 text-sm bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-lg hover:opacity-90 transition-opacity"
+                  className="mt-4 inline-block px-4 py-2 text-sm bg-gray-900 text-white rounded-lg hover:opacity-90 transition-opacity"
                 >
                   Open GitHub issue
                 </a>

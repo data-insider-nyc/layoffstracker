@@ -6,7 +6,6 @@ import {
 
 interface Props {
   data: Array<{ date: Date; laidOff: number }>;
-  isDarkMode?: boolean;
 }
 
 const MONTH_LABELS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -32,31 +31,30 @@ interface YoYTooltipProps {
   active?: boolean;
   payload?: YoYPayloadEntry[];
   label?: string;
-  isDarkMode?: boolean;
 }
 
-const CustomTooltip = ({ active, payload, label, isDarkMode }: YoYTooltipProps) => {
+const CustomTooltip = ({ active, payload, label }: YoYTooltipProps) => {
   if (!active || !payload?.length) return null;
   return (
     <div style={{
-      background: isDarkMode ? "#1c1c1a" : "#fff",
-      border: `1px solid ${isDarkMode ? "#2a2a26" : "#e2e0da"}`,
+      background: "var(--bg-card)",
+      border: `1px solid var(--border)`,
       borderRadius: 10,
       padding: "10px 14px",
       boxShadow: "0 8px 24px rgba(0,0,0,.12)",
       fontFamily: "var(--font-body)",
       minWidth: 160,
     }}>
-      <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: isDarkMode ? "#9e9c96" : "#6b6860", marginBottom: 8, letterSpacing: ".04em", textTransform: "uppercase" }}>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "#6b6860", marginBottom: 8, letterSpacing: ".04em", textTransform: "uppercase" }}>
         {label}
       </p>
       {payload.map((p: YoYPayloadEntry) => (
         <div key={p.dataKey} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, marginBottom: 3 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div style={{ width: 8, height: 8, borderRadius: 2, background: p.fill }} />
-            <span style={{ fontSize: 12, color: isDarkMode ? "#9e9c96" : "#6b6860" }}>{p.name}</span>
+            <span style={{ fontSize: 12, color: "#6b6860" }}>{p.name}</span>
           </div>
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 500, color: isDarkMode ? "#f0efe9" : "#1a1916" }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 500, color: "#1a1916" }}>
             {Number(p.value).toLocaleString()}
           </span>
         </div>
@@ -65,7 +63,7 @@ const CustomTooltip = ({ active, payload, label, isDarkMode }: YoYTooltipProps) 
   );
 };
 
-const LayoffYoYChart: React.FC<Props> = ({ data, isDarkMode = false }) => {
+const LayoffYoYChart: React.FC<Props> = ({ data }) => {
   const { chartData, years } = React.useMemo(() => {
     const monthYearMap: Record<number, Record<number, number>> = {};
     const yearSet = new Set<number>();
@@ -86,13 +84,13 @@ const LayoffYoYChart: React.FC<Props> = ({ data, isDarkMode = false }) => {
 
   if (!years.length) return null;
 
-  const axis = { fill: isDarkMode ? "#5a5955" : "#9e9c96", fontSize: 11, fontFamily: "var(--font-mono)" };
-  const grid = isDarkMode ? "#2a2a26" : "#e2e0da";
+  const axis = { fill: "#9e9c96", fontSize: 11, fontFamily: "var(--font-mono)" };
+  const grid = "var(--border)";
 
   return (
     <div style={{ width: "100%", height: 380 }} role="img" aria-label="Bar chart comparing year-over-year monthly layoff counts">
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 20, paddingLeft: 4 }}>
-        <h2 style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 400, color: isDarkMode ? "#f0efe9" : "#1a1916" }}>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 400, color: "#1a1916" }}>
           Year-over-Year Monthly Layoffs
         </h2>
       </div>
@@ -101,9 +99,9 @@ const LayoffYoYChart: React.FC<Props> = ({ data, isDarkMode = false }) => {
           <CartesianGrid strokeDasharray="2 4" stroke={grid} vertical={false} />
           <XAxis dataKey="month" tick={axis} axisLine={false} tickLine={false} />
           <YAxis tick={axis} axisLine={false} tickLine={false} tickFormatter={(v) => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v} />
-          <Tooltip content={<CustomTooltip isDarkMode={isDarkMode} />} cursor={{ fill: isDarkMode ? "rgba(255,255,255,.03)" : "rgba(0,0,0,.03)" }} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(0,0,0,.03)" }} />
           <Legend
-            wrapperStyle={{ fontFamily: "var(--font-mono)", fontSize: 11, paddingTop: 12, color: isDarkMode ? "#5a5955" : "#9e9c96" }}
+            wrapperStyle={{ fontFamily: "var(--font-mono)", fontSize: 11, paddingTop: 12, color: "#9e9c96" }}
             iconType="square" iconSize={8}
           />
           {years.map((year) => (

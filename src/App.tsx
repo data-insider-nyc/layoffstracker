@@ -1,4 +1,4 @@
-import React, { useState, Suspense, useEffect, useMemo } from "react";
+import React, { useState, Suspense, useMemo } from "react";
 import LayoffTable from "./components/LayoffTable";
 import { useLayoffData } from "./hooks/useLayoffData";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
@@ -56,17 +56,6 @@ export default function App() {
   const data = useLayoffData();
   const [selectedYear, setSelectedYear] = useState("ALL");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
-  const [isDarkMode] = useState(() => {
-    const saved = localStorage.getItem("darkMode");
-    return saved !== null
-      ? JSON.parse(saved)
-      : window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", isDarkMode);
-    localStorage.setItem("darkMode", JSON.stringify(isDarkMode));
-  }, [isDarkMode]);
 
   const yearFilteredData = useMemo(
     () =>
@@ -267,18 +256,13 @@ export default function App() {
             >
               About
             </Link>
-            {/* <button onClick={() => setIsDarkMode((v: boolean) => !v)}
-              style={{ width: 36, height: 36, borderRadius: 8, border: "1.5px solid var(--border)", background: "var(--bg-card)", color: "var(--text-secondary)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
-              aria-label="Toggle dark mode">
-              {isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
-            </button> */}
           </div>
         </nav>
 
         <Routes>
           <Route
             path="/company/:slug"
-            element={<CompanyPage data={data} isDarkMode={isDarkMode} />}
+            element={<CompanyPage data={data} />}
           />
           <Route path="/about" element={<About />} />
           <Route
@@ -513,7 +497,6 @@ export default function App() {
                               >
                                 <LayoffYoYChart
                                   data={categoryFilteredData}
-                                  isDarkMode={isDarkMode}
                                 />
                               </Suspense>
                             </ErrorBoundary>
@@ -530,7 +513,6 @@ export default function App() {
                               >
                                 <LayoffMonthlyTimeSeries
                                   data={filteredData}
-                                  isDarkMode={isDarkMode}
                                 />
                               </Suspense>
                             </ErrorBoundary>
@@ -553,7 +535,6 @@ export default function App() {
                                 >
                                   <LayoffTop10Chart
                                     data={filteredData}
-                                    isDarkMode={isDarkMode}
                                   />
                                 </Suspense>
                               </ErrorBoundary>
@@ -567,7 +548,6 @@ export default function App() {
                                 >
                                   <LayoffTopLocation
                                     data={filteredData}
-                                    isDarkMode={isDarkMode}
                                   />
                                 </Suspense>
                               </ErrorBoundary>
@@ -613,7 +593,6 @@ export default function App() {
                           <ErrorBoundary>
                             <LayoffTable
                               data={filteredData}
-                              isDarkMode={isDarkMode}
                             />
                           </ErrorBoundary>
                         </div>

@@ -6,12 +6,11 @@ import { LayoffData } from "../hooks/useLayoffData";
 
 interface Props {
   data: LayoffData[];
-  isDarkMode?: boolean;
 }
 
 const ROWS = 10;
 
-const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
+const LayoffTable: React.FC<Props> = ({ data }) => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
 
@@ -86,7 +85,7 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
               style={{
                 fontSize: 13,
                 fontWeight: 500,
-                color: isDarkMode ? "#818cf8" : "#0057FF",
+                color: "#0057FF",
               }}
             >
               {row.company}
@@ -95,15 +94,7 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
         );
       case "date":
         return (
-          <span
-            style={
-              {
-                // fontFamily: "var(--font-mono)",
-                // fontSize: 12,
-                // color: isDarkMode ? "#5a5955" : "#9e9c96",
-              }
-            }
-          >
+          <span>
             {new Date(row.date).toLocaleDateString("en-US", {
               year: "numeric",
               month: "short",
@@ -113,24 +104,13 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
         );
       case "laidOff":
         return (
-          <span
-            style={
-              {
-                // fontFamily: "var(--font-mono)",
-                // fontSize: 13,
-                // fontWeight: 600,
-                // color: isDarkMode ? "#f87171" : "#E8340A",
-              }
-            }
-          >
+          <span>
             {row.laidOff?.toLocaleString() ?? "—"}
           </span>
         );
       case "headquarter":
         return (
-          <span
-          // style={{ fontSize: 12, color: isDarkMode ? "#9e9c96" : "#6b6860" }}
-          >
+          <span>
             {row.headquarter || "US"}
           </span>
         );
@@ -142,19 +122,11 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
             href={`https://www.google.com/search?q=${encodeURIComponent(`${row.company} layoffs`)}`}
             target="_blank"
             rel="noopener noreferrer"
-            // style={{
-            //   color: isDarkMode ? "#3a3a35" : "#c8c5bc",
-            //   display: "flex",
-            //   alignItems: "center",
-            //   padding: 4,
-            //   borderRadius: 6,
-            //   transition: "color .15s",
-            // }}
             onMouseEnter={(e) =>
-              (e.currentTarget.style.color = isDarkMode ? "#9e9c96" : "#6b6860")
+              (e.currentTarget.style.color = "#6b6860")
             }
             onMouseLeave={(e) =>
-              (e.currentTarget.style.color = isDarkMode ? "#3a3a35" : "#c8c5bc")
+              (e.currentTarget.style.color = "#c8c5bc")
             }
           >
             <ExternalLink size={14} />
@@ -163,7 +135,7 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
       default:
         return (
           <span
-            style={{ fontSize: 12, color: isDarkMode ? "#9e9c96" : "#6b6860" }}
+            style={{ fontSize: 12, color: "#6b6860" }}
           >
             {row[h]}
           </span>
@@ -187,7 +159,7 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
               left: 12,
               top: "50%",
               transform: "translateY(-50%)",
-              color: isDarkMode ? "#3a3a35" : "#c8c5bc",
+              color: "#c8c5bc",
             }}
             width={14}
             height={14}
@@ -208,18 +180,18 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
               width: "100%",
               padding: "8px 32px 8px 36px",
               borderRadius: 8,
-              border: `1.5px solid ${isDarkMode ? "#2a2a26" : "#e2e0da"}`,
-              background: isDarkMode ? "#1a1a18" : "#f7f6f3",
-              color: isDarkMode ? "#f0efe9" : "#1a1916",
+              border: `1.5px solid #e2e0da`,
+              background: "#f7f6f3",
+              color: "#1a1916",
               fontSize: 13,
               fontFamily: "var(--font-body)",
               outline: "none",
             }}
             onFocus={(e) =>
-              (e.target.style.borderColor = isDarkMode ? "#818cf8" : "#0057FF")
+              (e.target.style.borderColor = "#0057FF")
             }
             onBlur={(e) =>
-              (e.target.style.borderColor = isDarkMode ? "#2a2a26" : "#e2e0da")
+              (e.target.style.borderColor = "#e2e0da")
             }
           />
           {search && (
@@ -236,7 +208,7 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
                 background: "none",
                 border: "none",
                 cursor: "pointer",
-                color: isDarkMode ? "#5a5955" : "#9e9c96",
+                color: "#9e9c96",
                 fontSize: 12,
                 padding: 2,
               }}
@@ -249,7 +221,7 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
           <p
             style={{
               fontSize: 12,
-              color: isDarkMode ? "#5a5955" : "#9e9c96",
+              color: "#9e9c96",
               marginTop: 8,
             }}
           >
@@ -313,16 +285,12 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
             padding: "6px 14px",
             borderRadius: 7,
             fontSize: 12,
-            border: `1.5px solid ${isDarkMode ? "#2a2a26" : "#e2e0da"}`,
+            border: `1.5px solid #e2e0da`,
             background: "transparent",
             color:
               page === 1
-                ? isDarkMode
-                  ? "#3a3a35"
-                  : "#c8c5bc"
-                : isDarkMode
-                  ? "#9e9c96"
-                  : "#6b6860",
+                ? "#c8c5bc"
+                : "#6b6860",
             cursor: page === 1 ? "default" : "pointer",
             fontFamily: "var(--font-body)",
             fontWeight: 500,
@@ -334,7 +302,7 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
           style={{
             fontFamily: "var(--font-mono)",
             fontSize: 11,
-            color: isDarkMode ? "#5a5955" : "#9e9c96",
+            color: "#9e9c96",
             letterSpacing: ".04em",
           }}
         >
@@ -348,16 +316,12 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
             padding: "6px 14px",
             borderRadius: 7,
             fontSize: 12,
-            border: `1.5px solid ${isDarkMode ? "#2a2a26" : "#e2e0da"}`,
+            border: `1.5px solid #e2e0da`,
             background: "transparent",
             color:
               page === totalPages
-                ? isDarkMode
-                  ? "#3a3a35"
-                  : "#c8c5bc"
-                : isDarkMode
-                  ? "#9e9c96"
-                  : "#6b6860",
+                ? "#c8c5bc"
+                : "#6b6860",
             cursor: page === totalPages ? "default" : "pointer",
             fontFamily: "var(--font-body)",
             fontWeight: 500,

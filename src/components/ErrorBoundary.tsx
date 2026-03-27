@@ -28,15 +28,15 @@ class ErrorBoundary extends React.Component<Props, State> {
     if (this.state.hasError) {
       return (
         this.props.fallback ?? (
-          <div className="flex flex-col items-center justify-center h-48 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400">
+          <div className="flex flex-col items-center justify-center h-48 rounded-lg border border-red-200 bg-red-50 text-red-600">
             <p className="text-2xl mb-2">⚠️</p>
             <p className="font-medium">Chart failed to render</p>
-            <p className="text-xs mt-1 text-red-400 dark:text-red-500 max-w-xs text-center">
+            <p className="text-xs mt-1 text-red-400 max-w-xs text-center">
               {this.state.error?.message ?? "Unknown error"}
             </p>
             <button
               onClick={() => this.setState({ hasError: false })}
-              className="mt-3 text-xs px-3 py-1 border border-red-300 dark:border-red-700 rounded hover:bg-red-100 dark:hover:bg-red-800 transition-colors"
+              className="mt-3 text-xs px-3 py-1 border border-red-300 rounded hover:bg-red-100 transition-colors"
             >
               Retry
             </button>
