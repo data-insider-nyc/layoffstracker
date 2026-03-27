@@ -259,7 +259,7 @@ const LayoffTable: React.FC<Props> = ({ data, isDarkMode = false }) => {
       </div>
 
       <div style={{ overflowX: "auto" }}>
-        <table className="data-table">
+        <table className="data-table" aria-label="Layoffs data table showing company, location, headcount, and date">
           <thead>
             <tr>
               {headers.map((h) => (

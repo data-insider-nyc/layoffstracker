@@ -25,14 +25,69 @@
     <meta name="twitter:image" content="https://data-insider-nyc.github.io/layoffstracker/og-image.png" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <link rel="apple-touch-icon" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <!-- Title -->
     <title>LayoffsTracker – Visualizing Tech Layoffs with Interactive Data</title>
 
     <!-- Google Site Verification -->
     <meta name="google-site-verification" content="Gs3mzpGvJvEqd_mQmvo9bHQ4AgAMfcrgFL6BGGmTLNY" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://data-insider-nyc.github.io/layoffstracker/#website",
+          "url": "https://data-insider-nyc.github.io/layoffstracker/",
+          "name": "Layoffs Tracker",
+          "description": "Interactive dashboard tracking tech and corporate layoffs with charts, timelines, and company-level data.",
+          "inLanguage": "en-US",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://data-insider-nyc.github.io/layoffstracker/company/{search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Dataset",
+          "@id": "https://data-insider-nyc.github.io/layoffstracker/#dataset",
+          "name": "Tech & Corporate Layoffs Dataset 2020–Present",
+          "description": "A continuously updated dataset of layoffs across tech and corporate sectors, including company name, headcount reduction, date, and location.",
+          "url": "https://data-insider-nyc.github.io/layoffstracker/",
+          "creator": {
+            "@type": "Person",
+            "name": "Karl Kwon"
+          },
+          "temporalCoverage": "2020/..",
+          "spatialCoverage": "United States",
+          "keywords": ["layoffs", "tech layoffs", "job cuts", "employment data", "corporate downsizing"],
+          "license": "https://creativecommons.org/licenses/by/4.0/",
+          "isAccessibleForFree": true,
+          "inLanguage": "en-US"
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://data-insider-nyc.github.io/layoffstracker/#app",
+          "name": "Layoffs Tracker",
+          "url": "https://data-insider-nyc.github.io/layoffstracker/",
+          "applicationCategory": "DataVisualization",
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

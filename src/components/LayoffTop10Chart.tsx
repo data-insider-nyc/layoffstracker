@@ -87,7 +87,7 @@ const LayoffTop10Chart: React.FC<Props> = ({ data, isDarkMode = false }) => {
   const grid = isDarkMode ? "#2a2a26" : "#e2e0da";
 
   return (
-    <div style={{ width: "100%", height: 440 }}>
+    <div style={{ width: "100%", height: 440 }} role="img" aria-label={`Bar chart showing top ${TOP_N} companies by total layoffs`}>
       <div style={{ paddingLeft: 4, marginBottom: 6 }}>
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 400, color: isDarkMode ? "#f0efe9" : "#1a1916", marginBottom: 2 }}>
           Top {TOP_N} Companies

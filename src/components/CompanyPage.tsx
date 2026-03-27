@@ -132,11 +132,13 @@ const CompanyPage: React.FC<Props> = ({ data, isDarkMode = false }) => {
           </div>
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={handleShare}
+              aria-label={`Share ${companyName} layoffs page`}
               style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 8, border: "none", background: "var(--accent)", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-body)" }}>
               <Share2 size={13} /> Share
             </button>
             <a href={`https://www.google.com/search?q=${encodeURIComponent(`${companyName} layoffs`)}`}
               target="_blank" rel="noopener noreferrer"
+              aria-label={`Search Google for ${companyName} layoffs`}
               style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 8, border: "1.5px solid var(--border)", background: "var(--bg-card)", color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, textDecoration: "none", fontFamily: "var(--font-body)" }}>
               <ExternalLink size={13} /> Google
             </a>
@@ -163,7 +165,7 @@ const CompanyPage: React.FC<Props> = ({ data, isDarkMode = false }) => {
 
           {/* Monthly timeline */}
           <ErrorBoundary>
-            <div style={chartCard}>
+            <div style={chartCard} role="img" aria-label={`Monthly layoff timeline for ${companyName}`}>
               <h2 style={{ fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 400, color: "var(--text-primary)", marginBottom: 16 }}>Monthly Layoff Timeline</h2>
               <ResponsiveContainer width="100%" height={260}>
                 <ComposedChart data={monthlyData} margin={{ top: 10, right: 12, left: -8, bottom: 20 }}>

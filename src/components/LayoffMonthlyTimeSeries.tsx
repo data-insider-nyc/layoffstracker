@@ -84,7 +84,7 @@ const LayoffMonthlyTimeSeries: React.FC<Props> = ({ data, isDarkMode = false }) 
   const top5 = [...aggregatedData].sort((a, b) => b.totalLayoffs - a.totalLayoffs).slice(0, 5).map(d => d.totalLayoffs);
 
   return (
-    <div style={{ width: "100%", height: 350 }}>
+    <div style={{ width: "100%", height: 350 }} role="img" aria-label={`Chart showing ${isDaily ? "daily" : "monthly"} layoffs over time with rolling average trend line`}>
       <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 20, paddingLeft: 4 }}>
         <h2 style={{ fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 400, color: isDarkMode ? "#f0efe9" : "#1a1916" }}>
           {isDaily ? "Daily Layoffs" : "Monthly Layoffs"}

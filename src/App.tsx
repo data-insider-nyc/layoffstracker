@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { TrendingDown, GitBranch } from "lucide-react";
 import KpiCard from "./components/KpiCard";
 import CompanyPage from "./components/CompanyPage";
+import About from "./components/About";
 import SEOHead from "./components/SEOHead";
 import ErrorBoundary from "./components/ErrorBoundary";
 
@@ -248,6 +249,24 @@ export default function App() {
             >
               <GitBranch size={13} /> GitHub
             </a>
+            <Link
+              to="/about"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "6px 12px",
+                borderRadius: 8,
+                border: "1.5px solid var(--border)",
+                background: "var(--bg-card)",
+                color: "var(--text-secondary)",
+                fontSize: 12,
+                fontWeight: 600,
+                textDecoration: "none",
+                fontFamily: "var(--font-body)",
+              }}
+            >
+              About
+            </Link>
             {/* <button onClick={() => setIsDarkMode((v: boolean) => !v)}
               style={{ width: 36, height: 36, borderRadius: 8, border: "1.5px solid var(--border)", background: "var(--bg-card)", color: "var(--text-secondary)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
               aria-label="Toggle dark mode">
@@ -261,6 +280,7 @@ export default function App() {
             path="/company/:slug"
             element={<CompanyPage data={data} isDarkMode={isDarkMode} />}
           />
+          <Route path="/about" element={<About />} />
           <Route
             path="/"
             element={
