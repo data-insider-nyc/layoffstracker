@@ -55,9 +55,8 @@ function ChartSkeleton({ height = 340 }: { height?: number }) {
 export default function App() {
   const data = useLayoffData();
   const [selectedYear, setSelectedYear] = useState("ALL");
-  const [selectedCategory, setSelectedCategory] = useState("ALL");
 
-  const yearFilteredData = useMemo(
+  const filteredData = useMemo(
     () =>
       selectedYear === "ALL"
         ? data
@@ -65,17 +64,6 @@ export default function App() {
             (d) => new Date(d.date).getFullYear() === parseInt(selectedYear),
           ),
     [data, selectedYear],
-  );
-  const filteredData = useMemo(
-    () =>
-      selectedCategory === "ALL"
-        ? yearFilteredData
-        : yearFilteredData.filter((d) =>
-            selectedCategory === "DOGE"
-              ? d.company.includes("Department")
-              : !d.company.includes("Department"),
-          ),
-    [yearFilteredData, selectedCategory],
   );
   const { totalLayoffs, totalCompanies, avgLayoffs, largestEvent } =
     useMemo(() => {
@@ -352,21 +340,9 @@ export default function App() {
                         </option>
                       ))}
                     </select>
-                    <select
-                      className="filter-select"
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                    >
-                      <option value="ALL">All Categories</option>
-                      <option value="General">Tech / Corporate</option>
-                      <option value="DOGE">Federal (DOGE)</option>
-                    </select>
-                    {(selectedYear !== "ALL" || selectedCategory !== "ALL") && (
+                    {selectedYear !== "ALL" && (
                       <button
-                        onClick={() => {
-                          setSelectedYear("ALL");
-                          setSelectedCategory("ALL");
-                        }}
+                        onClick={() => setSelectedYear("ALL")}
                         style={{
                           padding: "7px 14px",
                           borderRadius: 8,
@@ -406,10 +382,7 @@ export default function App() {
                         Try adjusting your filters.
                       </p>
                       <button
-                        onClick={() => {
-                          setSelectedYear("ALL");
-                          setSelectedCategory("ALL");
-                        }}
+                        onClick={() => setSelectedYear("ALL")}
                         style={{
                           padding: "10px 20px",
                           borderRadius: 8,
