@@ -217,7 +217,7 @@ export default function App() {
             )}
           </Link>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <a
+            {/* <a
               href="https://github.com/data-insider-nyc/layoffstracker"
               target="_blank"
               rel="noopener noreferrer"
@@ -237,7 +237,7 @@ export default function App() {
               }}
             >
               <GitBranch size={13} /> GitHub
-            </a>
+            </a> */}
             <Link
               to="/about"
               style={{
@@ -260,10 +260,7 @@ export default function App() {
         </nav>
 
         <Routes>
-          <Route
-            path="/company/:slug"
-            element={<CompanyPage data={data} />}
-          />
+          <Route path="/company/:slug" element={<CompanyPage data={data} />} />
           <Route path="/about" element={<About />} />
           <Route
             path="/"
@@ -495,9 +492,7 @@ export default function App() {
                               <Suspense
                                 fallback={<ChartSkeleton height={380} />}
                               >
-                                <LayoffYoYChart
-                                  data={categoryFilteredData}
-                                />
+                                <LayoffYoYChart data={categoryFilteredData} />
                               </Suspense>
                             </ErrorBoundary>
                           </div>
@@ -511,9 +506,7 @@ export default function App() {
                               <Suspense
                                 fallback={<ChartSkeleton height={350} />}
                               >
-                                <LayoffMonthlyTimeSeries
-                                  data={filteredData}
-                                />
+                                <LayoffMonthlyTimeSeries data={filteredData} />
                               </Suspense>
                             </ErrorBoundary>
                           </div>
@@ -533,9 +526,7 @@ export default function App() {
                                 <Suspense
                                   fallback={<ChartSkeleton height={440} />}
                                 >
-                                  <LayoffTop10Chart
-                                    data={filteredData}
-                                  />
+                                  <LayoffTop10Chart data={filteredData} />
                                 </Suspense>
                               </ErrorBoundary>
                             </div>
@@ -546,9 +537,7 @@ export default function App() {
                                 <Suspense
                                   fallback={<ChartSkeleton height={440} />}
                                 >
-                                  <LayoffTopLocation
-                                    data={filteredData}
-                                  />
+                                  <LayoffTopLocation data={filteredData} />
                                 </Suspense>
                               </ErrorBoundary>
                             </div>
@@ -591,9 +580,7 @@ export default function App() {
                             </span>
                           </div>
                           <ErrorBoundary>
-                            <LayoffTable
-                              data={filteredData}
-                            />
+                            <LayoffTable data={filteredData} />
                           </ErrorBoundary>
                         </div>
                       </div>
