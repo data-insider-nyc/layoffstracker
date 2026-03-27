@@ -1,5 +1,2 @@
 name = "layoffstracker"
 pages_build_output_dir = "dist"
-
-[env.production.vars]
-VITE_BASE_URL = "/"
