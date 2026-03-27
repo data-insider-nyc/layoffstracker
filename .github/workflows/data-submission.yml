@@ -32,7 +32,7 @@ jobs:
             };
 
             const company  = extract('Company');
-            const layoffs  = extract('Layoffs \\(headcount\\)');
+            const layoffs  = extract('Layoffs \\(headcount\\)') || extract('Layoffs');
             const date     = extract('Date');
             const location = extract('Location \\(HQ\\)');
             const source   = extract('Source / Link');
