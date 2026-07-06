@@ -1,4 +1,62 @@
 Company,headquarter,layoff,Date
+
+Microsoft,Seattle,4800,2026-07-06
+SAS,North Carolina,300,2026-07-01
+Bungie,Seattle,292,2026-06-25
+Sonos,Santa Barbara,55,2026-06-25
+Snyk,Boston,90,2026-06-24
+Elastic,SF Bay Area,280,2026-06-23
+Robinhood,SF Bay Area,290,2026-06-16
+ServiceNow,SF Bay Area,63,2026-06-11
+Pleo,"Copenhagen,Non-U.S.",50,2026-06-11
+Ubisoft,"Paris,Non-U.S.",380,2026-06-10
+Opendoor,San Francisco,250,2026-06-10
+Rackspace,San Antonio,750,2026-06-10
+Salesforce,San Francisco,2300,2026-06-08
+Hailo,"Tel Aviv,Non-U.S.",110,2026-06-07
+Zencity,New York City,20,2026-06-06
+Metacore,"Helsinki,Non-U.S.",159,2026-06-04
+Uber,San Francisco,340,2026-06-03
+GitLab,San Francisco,350,2026-06-03
+Skai,San Francisco,100,2026-06-02
+Lightricks,"Tel Aviv,Non-U.S.",75,2026-06-01
+Interview Kickstart,Wilmington,50,2026-06-01
+SentinelOne,SF Bay Area,230,2026-05-28
+Webflow,San Francisco,,2026-05-27
+Groupon,Chicago,400,2026-05-27
+Rapyd,"London,Non-U.S.",,2026-05-27
+Minute Media,New York City,12,2026-05-27
+Amdocs,Chesterfield,10,2026-05-27
+Picnic,Seattle,100,2026-05-26
+Wix,"Tel Aviv,Non-U.S.",1000,2026-05-24
+Intuit,SF Bay Area,3000,2026-05-20
+ClickUp,San Diego,285,2026-05-20
+Quantic Dream,"Paris,Non-U.S.",95,2026-05-20
+AI21 Labs,"Tel Aviv,Non-U.S.",60,2026-05-17
+SQream,New York City,100,2026-05-17
+Innovaccer,San Francisco,340,2026-05-14
+Jumia,"Lagos,Non-U.S.",200,2026-05-14
+Kraken,San Francisco,150,2026-05-14
+Gameteq,"Limassol,Non-U.S.",40,2026-05-14
+Gambling.com,"Dublin,Non-U.S.",25,2026-05-14
+Dune Analytics,"Oslo,Non-U.S.",25,2026-05-14
+Cisco,SF Bay Area,4000,2026-05-13
+LinkedIn,SF Bay Area,875,2026-05-13
+Playtika,"Berlin,Non-U.S.",,2026-05-13
+ZoomInfo,Vancouver WA,600,2026-05-11
+Cloudflare,San Francisco,1100,2026-05-07
+DeepL,"Cologne,Non-U.S.",250,2026-05-07
+Upwork,SF Bay Area,145,2026-05-07
+Kyndryl,New York City,,2026-05-06
+Arctic Wolf,Eden Prairie,250,2026-05-06
+PayPal,SF Bay Area,4500,2026-05-05
+Coinbase,SF Bay Area,700,2026-05-05
+Cognizant,Teaneck,,2026-04-29
+Meta,SF Bay Area,8000,2026-04-23
+Microsoft,Seattle,8750,2026-04-23
+Vimeo,New York City,132,2026-04-20
+UKG,Weston,950,2026-04-15
+Snap,Los Angeles,1000,2026-04-15
 GoPro,SF Bay Area,145,2026-04-07
 Oracle, SF Bay Area, 30000, 2026-03-31
 Meta,SF Bay Area,700,2026-03-25
